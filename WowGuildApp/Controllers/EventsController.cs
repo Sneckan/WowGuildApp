@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WowGuildApp.Data;
 using WowGuildApp.Models;
+using WowGuildApp.ViewModels;
 
 namespace WowGuildApp
 {
@@ -19,11 +20,38 @@ namespace WowGuildApp
             _context = context;
         }
 
-        // GET: Events
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Event.ToListAsync());
+            CalendarViewModel model = new CalendarViewModel
+            {
+                date = DateTime.Now
+            };
+            model.next = model.date.AddMonths(1).ToString("yyyy-MM");
+            model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
+
+            return View(model);
         }
+
+
+        [Route("/Events/Index/{newDate}")]
+        public IActionResult Index(string newDate)
+        {
+            DateTime parsedDate = DateTime.Parse(newDate);
+            CalendarViewModel model = new CalendarViewModel
+            {
+                date = parsedDate
+            };
+            model.next = model.date.AddMonths(1).ToString("yyyy-MM");
+            model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
+
+            return View(model);
+        }
+
+        // GET: Events
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View(await _context.Event.ToListAsync());
+        //}
 
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)

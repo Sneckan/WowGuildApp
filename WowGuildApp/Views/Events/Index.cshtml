@@ -1,41 +1,42 @@
-﻿@model IEnumerable<WowGuildApp.Models.Event>
-
+﻿@model CalendarViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Raid Planner";
 }
 
-<h2>Index</h2>
+<h1>@ViewData["Title"]</h1>
+<div class="container">
+    <div class="row">
+        <a href="/Events/Index/@Model.prev" class="btn btn-primary col-lg-4">Prev</a>
+        <p class="col-lg-4">@Model.date.ToString("MMMM")</p>
+        <a href="/Events/Index/@Model.next" class="btn btn-primary col-lg-4">Next</a>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
-    <thead>
+    <thead class="thead-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th></th>
+            <td>
+                Monday
+            </td>
+            <td>
+                Tuesday
+            </td>
+            <td>
+                Wednsday
+            </td>
+            <td>
+                Thursday
+            </td>
+            <td>
+                Friday
+            </td>
+            <td>
+                Saturday
+            </td>
+            <td>
+                Sunday
+            </td>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+    <tbody></tbody>
 </table>
