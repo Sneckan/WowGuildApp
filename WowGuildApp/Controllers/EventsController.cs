@@ -22,9 +22,11 @@ namespace WowGuildApp
 
         public IActionResult Index()
         {
+            DateTime temp = DateTime.Now;
+            string dateString = temp.ToString("yyyy-MM");
             CalendarViewModel model = new CalendarViewModel
             {
-                date = DateTime.Now
+                date = DateTime.Parse(dateString)
             };
             model.next = model.date.AddMonths(1).ToString("yyyy-MM");
             model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
@@ -33,7 +35,7 @@ namespace WowGuildApp
         }
 
 
-        [Route("/Events/Index/{newDate}")]
+        [Route("/Events/{newDate}")]
         public IActionResult Index(string newDate)
         {
             DateTime parsedDate = DateTime.Parse(newDate);

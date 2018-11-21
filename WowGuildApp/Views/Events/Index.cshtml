@@ -6,9 +6,9 @@
 <h1>@ViewData["Title"]</h1>
 <div class="container">
     <div class="row">
-        <a href="/Events/Index/@Model.prev" class="btn btn-primary col-lg-4">Prev</a>
+        <a href="/Events/@Model.prev" class="btn btn-primary col-lg-4">Prev</a>
         <p class="col-lg-4">@Model.date.ToString("MMMM")</p>
-        <a href="/Events/Index/@Model.next" class="btn btn-primary col-lg-4">Next</a>
+        <a href="/Events/@Model.next" class="btn btn-primary col-lg-4">Next</a>
     </div>
 </div>
 
@@ -38,5 +38,9 @@
             </td>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+        <tr>
+            
+        </tr>
+    </tbody>
 </table>
