@@ -30,24 +30,25 @@ namespace WowGuildApp
             };
             model.next = model.date.AddMonths(1).ToString("yyyy-MM");
             model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
+            model.Events = _context.Event.ToList();
 
             return View(model);
         }
 
 
-        [Route("/Events/{newDate}")]
-        public IActionResult Index(string newDate)
-        {
-            DateTime parsedDate = DateTime.Parse(newDate);
-            CalendarViewModel model = new CalendarViewModel
-            {
-                date = parsedDate
-            };
-            model.next = model.date.AddMonths(1).ToString("yyyy-MM");
-            model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
+        //[Route("/Events/{newDate}")]
+        //public IActionResult Index(string newDate)
+        //{
+        //    DateTime parsedDate = DateTime.Parse(newDate);
+        //    CalendarViewModel model = new CalendarViewModel
+        //    {
+        //        date = parsedDate
+        //    };
+        //    model.next = model.date.AddMonths(1).ToString("yyyy-MM");
+        //    model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
         // GET: Events
         //public async Task<IActionResult> Index()
@@ -79,12 +80,23 @@ namespace WowGuildApp
             return View();
         }
 
+        [HttpGet]
+        [Route("Events/Create/{date}")]
+        public IActionResult Create(string date)
+        {
+            Event model = new Event
+            {
+                Date = DateTime.Parse(date)
+            };
+            return View(model);
+        }
+
         // POST: Events/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description")] Event @event)
+        public async Task<IActionResult> Create([Bind("Title,Description,Date")] Event @event)
         {
             if (ModelState.IsValid)
             {
@@ -116,7 +128,7 @@ namespace WowGuildApp
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Date")] Event @event)
         {
             if (id != @event.Id)
             {
