@@ -11,5 +11,11 @@ namespace WowGuildApp.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime Date { get; set; }
+        public string InviteTime { get; set; }
+        public string StartTime { get; set; }
+        public string LastSignup { get; set; }
+
+        public virtual string hostId { get; set; }
+        public virtual User host { get; set; }
     }
 }

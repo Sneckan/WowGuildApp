@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,46 +17,25 @@ namespace WowGuildApp
     {
         private readonly ApplicationDbContext _context;
 
-        public EventsController(ApplicationDbContext context)
+        private UserManager<User> userManager;
+        private Task<User> GetCurrentUserAsync() => userManager.GetUserAsync(HttpContext.User);
+
+        public EventsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            this.userManager = userManager;
+
         }
 
+        [Authorize]
         public IActionResult Index()
         {
-            DateTime temp = DateTime.Now;
-            string dateString = temp.ToString("yyyy-MM");
-            CalendarViewModel model = new CalendarViewModel
-            {
-                date = DateTime.Parse(dateString)
-            };
-            model.next = model.date.AddMonths(1).ToString("yyyy-MM");
-            model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
-            model.Events = _context.Event.ToList();
+            List<Event> model;
+
+            model = _context.Event.ToList();
 
             return View(model);
         }
-
-
-        //[Route("/Events/{newDate}")]
-        //public IActionResult Index(string newDate)
-        //{
-        //    DateTime parsedDate = DateTime.Parse(newDate);
-        //    CalendarViewModel model = new CalendarViewModel
-        //    {
-        //        date = parsedDate
-        //    };
-        //    model.next = model.date.AddMonths(1).ToString("yyyy-MM");
-        //    model.prev = model.date.AddMonths(-1).ToString("yyyy-MM");
-
-        //    return View(model);
-        //}
-
-        // GET: Events
-        //public async Task<IActionResult> Index()
-        //{
-        //    return View(await _context.Event.ToListAsync());
-        //}
 
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -71,7 +52,16 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-            return View(@event);
+            var @host = await _context.Users.FirstOrDefaultAsync(u => u.Id == @event.hostId);
+
+            EventDetailViewModel model = new EventDetailViewModel
+            {
+                Event = @event,
+                Host = @host
+            };
+
+
+            return View(model);
         }
 
         // GET: Events/Create
@@ -80,8 +70,7 @@ namespace WowGuildApp
             return View();
         }
 
-        [HttpGet]
-        [Route("Events/Create/{date}")]
+        [HttpGet,Route("Events/Create/{date}")]
         public IActionResult Create(string date)
         {
             Event model = new Event
@@ -96,10 +85,12 @@ namespace WowGuildApp
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,Date")] Event @event)
+        public async Task<IActionResult> Create([Bind("Title,Description,InviteTime,StartTime,LastSignup,Date")] Event @event)
         {
             if (ModelState.IsValid)
             {
+                var user = await GetCurrentUserAsync();
+                @event.host = user;
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -172,6 +163,8 @@ namespace WowGuildApp
             {
                 return NotFound();
             }
+
+            
 
             return View(@event);
         }

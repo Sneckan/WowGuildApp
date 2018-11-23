@@ -1,4 +1,6 @@
-﻿@model WowGuildApp.Models.Event
+﻿@model WowGuildApp.ViewModels.EventDetailViewModel
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -11,20 +13,48 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.Event.Title)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Title)
+            @Html.DisplayFor(model => model.Event.Title)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Description)
+            Raidleader
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Description)
+            @Model.Host.UserName
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Event.Description)
+        </dd>
+        <dt>
+            Invite Time
+        </dt>
+        <dd>
+            @Html.DisplayFor(model=>model.Event.InviteTime)
+        </dd>
+        <dt>
+            Start Time
+        </dt>
+        <dd>
+            @Html.DisplayFor(model=>model.Event.StartTime)
+        </dd>
+        <dt>
+            Last Signup
+        </dt>
+        <dd>
+            @Html.DisplayFor(model=>model.Event.LastSignup)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Event.hostId)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Event.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Event.Id" class="btn btn-danger">Delete</a>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

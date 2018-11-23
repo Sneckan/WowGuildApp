@@ -1,4 +1,4 @@
-﻿@model CalendarViewModel
+﻿@model List<Event>
 @{
         ViewData["Title"] = "Raid Planner";
 }
@@ -6,47 +6,6 @@
 
 
 <h1>@ViewData["Title"]</h1>
-@*<div class="container">
-        <div class="row">
-            <a href="/Events/@Model.prev" class="btn btn-primary col-lg-4">Prev</a>
-            <p class="col-lg-4">@Model.date.ToString("MMMM")</p>
-            <a href="/Events/@Model.next" class="btn btn-primary col-lg-4">Next</a>
-        </div>
-    </div>
-
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <td>
-                    Monday
-                </td>
-                <td>
-                    Tuesday
-                </td>
-                <td>
-                    Wednsday
-                </td>
-                <td>
-                    Thursday
-                </td>
-                <td>
-                    Friday
-                </td>
-                <td>
-                    Saturday
-                </td>
-                <td>
-                    Sunday
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td></td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>*@
 
 
 @* Lyckades inte komma på ett eget sätt att skapa "kalendern"
@@ -67,7 +26,7 @@
                 window.open('Events/Create/'+date.format(),'_self')
             },
             events: [
-                @foreach (Event i in Model.Events)
+                @foreach (Event i in Model)
                 {
                     <text>
                         {
