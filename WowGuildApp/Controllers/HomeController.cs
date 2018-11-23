@@ -4,14 +4,26 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using WowGuildApp.Data;
 using WowGuildApp.Models;
 
 namespace WowGuildApp.Controllers
 {
     public class HomeController : Controller
     {
+        private ApplicationDbContext db;
+
+        public HomeController()
+        {
+          this.db = db;
+        }
+
         public IActionResult Index()
         {
+            var post = new Post();
+            post.Date = DateTime.Now;
+            db.Posts.Add(post);
+            db.SaveChanges();
             return View();
         }
 
