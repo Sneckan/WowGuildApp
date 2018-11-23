@@ -1,0 +1,12 @@
+﻿@model WowGuildApp.Controllers.ForumController.Categories
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Guild forum</h2>
+
+@foreach (var value in Enum.GetValues(typeof(WowGuildApp.Controllers.ForumController.Categories)))
+{
+    @Enum.GetName(typeof(WowGuildApp.Controllers.ForumController.Categories), value))
+}

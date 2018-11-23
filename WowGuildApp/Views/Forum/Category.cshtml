@@ -1,0 +1,15 @@
+﻿@model IEnumerable<Post>
+
+@{
+    ViewData["Title"] = "Category";
+}
+
+<h1>Forum > </h1>
+
+@foreach (var item in Model)
+{
+    <div>
+        @item.Title
+        @item.Category
+    </div>
+}

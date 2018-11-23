@@ -13,17 +13,13 @@ namespace WowGuildApp.Controllers
     {
         private ApplicationDbContext db;
 
-        public HomeController()
+        public HomeController(ApplicationDbContext db)
         {
           this.db = db;
         }
 
         public IActionResult Index()
         {
-            var post = new Post();
-            post.Date = DateTime.Now;
-            db.Posts.Add(post);
-            db.SaveChanges();
             return View();
         }
 
