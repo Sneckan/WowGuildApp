@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WowGuildApp</title>
 
+    <script src="~/lib/fullCalendar/jquery.min.js"></script>
+    <script src='~/lib/fullCalendar/moment.min.js'></script>
+    <script src='~/lib/fullCalendar/fullcalendar.js'></script>
+    <link rel='stylesheet' href='~/lib/fullCalendar/fullcalendar.css' />
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -12,10 +16,6 @@
     <environment exclude="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     </environment>
-    <script src="~/lib/fullCalendar/jquery.min.js"></script>
-    <script src='~/lib/fullCalendar/moment.min.js'></script>
-    <script src='~/lib/fullCalendar/fullcalendar.js'></script>
-    <link rel='stylesheet' href='~/lib/fullCalendar/fullcalendar.css' />
 </head>
 <body>
 

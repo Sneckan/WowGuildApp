@@ -1,7 +1,13 @@
 ﻿
-$color : #0094ff;
+$fcText : white;
+$fcEvent : red;
 
 
 .fc-title {
-    color: $color;
+    color: $fcText;
+}
+
+.fc-event{
+    background-color: $fcEvent;
+    border-color: lighten($fcEvent,10%)
 }

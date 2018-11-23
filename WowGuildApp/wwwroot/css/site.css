@@ -1,5 +1,10 @@
 .fc-title {
-  color: #0094ff;
+  color: white;
+}
+
+.fc-event {
+  background-color: red;
+  border-color: #ff3333;
 }
 
 /*# sourceMappingURL=site.css.map */
