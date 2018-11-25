@@ -1,0 +1,12 @@
+﻿@model PostsViewModel
+
+@{
+    ViewData["Title"] = Model.Category;
+}
+
+<h1>@Model.Category</h1>
+
+@foreach (var item in Model.Posts)
+{
+    <p>@item.Title</p>
+}

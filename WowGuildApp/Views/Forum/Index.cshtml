@@ -1,21 +1,41 @@
-﻿@model IEnumerable<WowGuildApp.Models.Post>
+﻿@model WowGuildApp.Models.PostsViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Forum";
 }
 
-<h2>Index</h2>
+<h1>Forum</h1>
 
-<p>
+<table class="table">
+
+    <tbody>
+        @{
+            foreach (var category in Model.Categories)
+            {
+                foreach (var post in Model.LatestPosts)
+                {
+                    if (category == post.Category)
+                    {
+                        <tr>
+                            <td style="font-size: 24px;">
+                                <a href="/Forum/@category">@category</a>
+                            </td>
+                            <td>
+                                <p>@post.Title</p>
+                                <p>By: @post.UserId</p>
+                                <p>@post.Date</p>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@*<p>
     <a asp-action="Create">Create New</a>
 </p>
-
-<div>
-    @*@foreach (var item in Enum.GetValues(typeof(WowGuildApp.Controllers)))
-    {
-        
-    }*@
-</div>
 
 <table class="table">
     <thead>
@@ -58,4 +78,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table>*@

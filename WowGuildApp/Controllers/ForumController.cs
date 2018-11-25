@@ -39,14 +39,33 @@ namespace WowGuildApp
         [Route("Forum/{category}")]
         public IActionResult Category(string category)
         {
-            var list = db.Posts.Where(p => p.Category == category);
-            return View(list);
+            PostsViewModel viewModel = new PostsViewModel();
+            viewModel.Posts = db.Posts.Where(p => p.Category == category).ToList();
+            viewModel.Category = category;
+
+            return View(viewModel);
         }
 
         // GET: Forum
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await db.Posts.ToListAsync());
+            PostsViewModel viewModel = new PostsViewModel();
+            viewModel.Categories = new List<string>();
+            viewModel.LatestPosts = new List<Post>();
+
+            foreach (var val in Enum.GetValues(typeof(Categories)))
+            {
+                var description = EnumExtensions.GetEnumDescription((Categories)val);
+                viewModel.Categories.Add(description);
+
+                var latestPost = db.Posts.Where(p => p.Category == description).OrderByDescending(p => p.Date).FirstOrDefault();
+                if (latestPost != null)
+                {
+                    viewModel.LatestPosts.Add(latestPost);
+                }
+            }
+
+            return View(viewModel);
         }
 
         // GET: Forum/Details/5
@@ -82,6 +101,7 @@ namespace WowGuildApp
         {
             if (ModelState.IsValid)
             {
+                post.UserId = User.Identity.Name;
                 db.Add(post);
                 await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
