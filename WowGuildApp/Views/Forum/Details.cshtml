@@ -4,39 +4,53 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<div class="container" style="background-color: #1d2124;margin-bottom: 10px;@*background-image: url(https://syndicate-wow.com/forum/uploads/monthly_2018_05/news_background_wow.jpg.af82ade8e2857e55f9a9d7c46a6cdace.jpg.3ad1376b5254d5f05f935afc8959de78.jpg)*@">
+    <div class="post-header col" style="color: white;padding: 10px;">
+        <h1 style="color: white;">@Model.Title</h1>
+        <p style="float: left"><a href="@Url.Action("Index", "Forum")">Forum</a> / <a href="@Url.Action("Category", "Forum", new { category = @Model.Category })">@Model.Category</a></p>
+        <p style="float:right;">@Model.Date</p>
+    </div>
 
-<div>
-    <h4>Post</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Category)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div style="clear: both"></div>
+
+    <div class="row" style="border-top: 3px solid #373a3e">
+        <div class="user-profile col" style="color: white;padding: 5px;font-size: 14px">
+            <div style="padding: 5px;">
+                <img src="~/images/character.PNG" style="float: left;margin-right: 10px;" />
+                <p style="margin: 0">@Model.User.UserName</p>
+                <p style="margin: 0">Guildrank: Officer</p>
+                <p style="margin: 0">120 Draenei Paladin</p>
+                <p style="margin: 0">ilvl: 381</p>
+                <p style="margin: 0">1400 posts</p>
+            </div>
+        </div>
+
+        <div class="post-content col-9" style="margin: 0;padding: 5px;">
+            @Html.Raw(Model.Content)
+        </div>
+    </div>
+
+
+@foreach (var item in Model.Comments)
+{
+    <div class="post-comment" style="background-color: #1d2124;border-top: 3px solid grey;margin-top: 20px;">
+        <div class="row" style="">
+            <div class="user-profile col" style="color: white;padding: 5px;font-size: 14px">
+                <div style="padding: 5px;">
+                    <img src="~/images/character.PNG" style="float: left;margin-right: 10px;" />
+                    <p style="margin: 0">@Model.User.UserName</p>
+                    <p style="margin: 0">Guildrank: Officer</p>
+                    <p style="margin: 0">120 Draenei Paladin</p>
+                    <p style="margin: 0">ilvl: 381</p>
+                    <p style="margin: 0">1400 posts</p>
+                </div>
+            </div>
+    
+            <div class="post-content col-9" style="margin: 0;padding: 5px;">
+                @item.Text
+            </div>
+        </div>
+    </div>
+}
+
 </div>

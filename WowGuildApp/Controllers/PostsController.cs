@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -10,52 +9,26 @@ using Microsoft.EntityFrameworkCore;
 using WowGuildApp.Data;
 using WowGuildApp.Models;
 
-namespace WowGuildApp
+namespace WowGuildApp.Controllers
 {
-    public class ForumController : Controller
+    public class PostsController : Controller
     {
-        private readonly ApplicationDbContext db;
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
 
-        public ForumController(ApplicationDbContext context, UserManager<User> userManager)
+        public PostsController(ApplicationDbContext context)
         {
-            db = context;
-            _userManager = userManager;
+            _context = context;
         }
 
-        [Route("Forum/Categories/{category}")]
-        public IActionResult Category(string category)
+        // GET: Posts
+        public async Task<IActionResult> Index()
         {
-            PostsViewModel viewModel = new PostsViewModel();
-            viewModel.Posts = db.Posts.Where(p => p.Category == category).ToList();
-            viewModel.Category = category;
-
-            return View(viewModel);
+            var applicationDbContext = _context.Posts.Include(p => p.User);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Forum
-        public IActionResult Index()
-        {
-            PostsViewModel viewModel = new PostsViewModel();
-            viewModel.Categories = new List<string>();
-            viewModel.LatestPosts = new List<Post>();
-
-            foreach (var val in Enum.GetValues(typeof(Post.Categories)))
-            {
-                var description = EnumExtensions.GetEnumDescription((Post.Categories)val);
-                viewModel.Categories.Add(description);
-
-                var latestPost = db.Posts.Include(p => p.User).Where(p => p.Category == description).OrderByDescending(p => p.Date).FirstOrDefault();
-                if (latestPost != null)
-                {
-                    viewModel.LatestPosts.Add(latestPost);
-                }
-            }
-
-            return View(viewModel);
-        }
-
-        // GET: Forum/Details/5
+        // GET: Posts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -63,8 +36,9 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-            var post = await db.Posts
-                .Include(p => p.User).Include(p => p.Comments).FirstOrDefaultAsync(m => m.Id == id);
+            var post = await _context.Posts
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
@@ -73,31 +47,31 @@ namespace WowGuildApp
             return View(post);
         }
 
-        // GET: Forum/Create
+        // GET: Posts/Create
         public IActionResult Create()
         {
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Forum/Create
+        // POST: Posts/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Category,Content,Date")] Post post)
+        public async Task<IActionResult> Create([Bind("Id,Title,Category,Content,Date,UserId")] Post post)
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.GetUserAsync(HttpContext.User);
-                post.UserId = user.Id;
-                db.Add(post);
-                await db.SaveChangesAsync();
+                _context.Add(post);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", post.UserId);
             return View(post);
         }
 
-        // GET: Forum/Edit/5
+        // GET: Posts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,20 +79,21 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-            var post = await db.Posts.FindAsync(id);
+            var post = await _context.Posts.FindAsync(id);
             if (post == null)
             {
                 return NotFound();
             }
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", post.UserId);
             return View(post);
         }
 
-        // POST: Forum/Edit/5
+        // POST: Posts/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Category,Content,Date")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Category,Content,Date,UserId")] Post post)
         {
             if (id != post.Id)
             {
@@ -129,10 +104,8 @@ namespace WowGuildApp
             {
                 try
                 {
-                    var user = await _userManager.GetUserAsync(HttpContext.User);
-                    post.UserId = user.Id;
-                    db.Update(post);
-                    await db.SaveChangesAsync();
+                    _context.Update(post);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -147,10 +120,11 @@ namespace WowGuildApp
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", post.UserId);
             return View(post);
         }
 
-        // GET: Forum/Delete/5
+        // GET: Posts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -158,7 +132,8 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-            var post = await db.Posts
+            var post = await _context.Posts
+                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
@@ -168,20 +143,20 @@ namespace WowGuildApp
             return View(post);
         }
 
-        // POST: Forum/Delete/5
+        // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var post = await db.Posts.FindAsync(id);
-            db.Posts.Remove(post);
-            await db.SaveChangesAsync();
+            var post = await _context.Posts.FindAsync(id);
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PostExists(int id)
         {
-            return db.Posts.Any(e => e.Id == id);
+            return _context.Posts.Any(e => e.Id == id);
         }
     }
 }

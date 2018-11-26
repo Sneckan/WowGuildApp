@@ -7,7 +7,12 @@
 <h1>Forum</h1>
 
 <table class="table">
-
+    <thead style="border: none"> 
+        <tr>
+            <th style="border: none">Category</th>
+            <th style="border: none">Latest post</th>
+        </tr>
+    </thead>
     <tbody>
         @{
             foreach (var category in Model.Categories)
@@ -18,11 +23,11 @@
                     {
                         <tr>
                             <td style="font-size: 24px;">
-                                <a href="/Forum/@category">@category</a>
+                                <a href="@Url.Action("Category", "Forum", new { category = @category })">@category</a>
                             </td>
-                            <td>
-                                <p>@post.Title</p>
-                                <p>By: @post.UserId</p>
+                            <td style="font-size: 14px;">
+                                <a href="@Url.Action("Details", "Forum", new { id = post.Id })">@post.Title</a>
+                                <p style="margin: 0;padding: 0;">by <a href="/Profile/@post.User.UserName">@Html.DisplayFor(modelItem => post.User.UserName)</a></p>
                                 <p>@post.Date</p>
                             </td>
                         </tr>

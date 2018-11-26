@@ -53,7 +53,8 @@ namespace WowGuildApp.Controllers
                 return View();
             }
 
-            var result = await signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
+            User signedUser = await userManager.FindByEmailAsync(request.Email);
+            var result = await signInManager.PasswordSignInAsync(signedUser.UserName, request.Password, false, false);
 
             if (!result.Succeeded)
             {
