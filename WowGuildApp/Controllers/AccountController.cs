@@ -98,7 +98,7 @@ namespace WowGuildApp.Controllers
             }
 
             //Sist men inte minst, vi vill inte returnera en särskild view bara för detta tillfälle, så vi vidarebefordrar användaren till AccountControll Index.
-            return RedirectToAction("Index");
+            return RedirectToAction("Login");
         }
     }
 }

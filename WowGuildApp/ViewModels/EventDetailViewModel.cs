@@ -10,5 +10,7 @@ namespace WowGuildApp.ViewModels
     {
         public Event Event { get; set; }
         public User Host { get; set; }
+        public Signup Signup { get; set; }
+        public List<Signup> Signups { get; set; }
     }
 }

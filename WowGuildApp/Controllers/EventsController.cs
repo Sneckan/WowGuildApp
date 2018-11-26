@@ -54,10 +54,18 @@ namespace WowGuildApp
 
             var @host = await _context.Users.FirstOrDefaultAsync(u => u.Id == @event.hostId);
 
+            var @signups = _context.Signup.Where(s => s.EventId == @event.Id).ToList();
+
+            foreach (Signup s in signups)
+            {
+                s.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == s.UserId);
+            }
+
             EventDetailViewModel model = new EventDetailViewModel
             {
                 Event = @event,
-                Host = @host
+                Host = @host,
+                Signups = @signups,
             };
 
 
@@ -91,6 +99,18 @@ namespace WowGuildApp
             {
                 var user = await GetCurrentUserAsync();
                 @event.host = user;
+                
+
+
+                TimeSpan ts = @event.InviteTime.TimeOfDay;
+                @event.InviteTime = @event.Date.Date + ts;
+
+                ts = @event.StartTime.TimeOfDay;
+                @event.StartTime = @event.Date.Date + ts;
+
+                ts = @event.LastSignup.TimeOfDay;
+                @event.LastSignup = @event.Date.Date + ts;
+
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -119,7 +139,7 @@ namespace WowGuildApp
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Date")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,hostId,Title,Description,InviteTime,StartTime,LastSignup,Date")] Event @event)
         {
             if (id != @event.Id)
             {
@@ -130,6 +150,15 @@ namespace WowGuildApp
             {
                 try
                 {
+                    TimeSpan ts = @event.InviteTime.TimeOfDay;
+                    @event.InviteTime = @event.Date.Date + ts;
+
+                    ts = @event.StartTime.TimeOfDay;
+                    @event.StartTime = @event.Date.Date + ts;
+
+                    ts = @event.LastSignup.TimeOfDay;
+                    @event.LastSignup = @event.Date.Date + ts;
+
                     _context.Update(@event);
                     await _context.SaveChangesAsync();
                 }
@@ -183,6 +212,62 @@ namespace WowGuildApp
         private bool EventExists(int id)
         {
             return _context.Event.Any(e => e.Id == id);
+        }
+
+   
+        [HttpPost]
+        public IActionResult Signup(Signup signup)
+        {
+
+            if(_context.Signup.FirstOrDefault(s => s.EventId==signup.EventId && s.UserId == signup.UserId)==null)
+            {
+                signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
+                signup.Event = _context.Event.FirstOrDefault(e => e.Id == signup.EventId);
+                signup.Sign = true;
+
+                _context.Signup.Add(signup);
+                _context.SaveChanges();
+            }
+
+            else
+            {
+                var signedUser = _context.Signup.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId);
+                signedUser.Sign = true;
+                signedUser.RoleDps = signup.RoleDps;
+                signedUser.RoleHealer = signup.RoleHealer;
+                signedUser.RoleTank = signup.RoleTank;
+                _context.Signup.Update(signedUser);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Details/"+ signup.EventId);
+        }
+
+        [HttpPost]
+        public IActionResult UnSign(Signup signup)
+        {
+
+            if (_context.Signup.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId) == null)
+            {
+                signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
+                signup.Event = _context.Event.FirstOrDefault(e => e.Id == signup.EventId);
+                signup.Sign = false;
+
+                _context.Signup.Add(signup);
+                _context.SaveChanges();
+            }
+
+            else
+            {
+                var signedUser = _context.Signup.FirstOrDefault(s => s.UserId == signup.UserId && s.EventId == signup.EventId);
+                signedUser.Sign = false;
+
+                _context.Signup.Update(signedUser);
+                _context.SaveChanges();
+            }
+            
+
+            return RedirectToAction("Details/" + signup.EventId);
         }
     }
 }

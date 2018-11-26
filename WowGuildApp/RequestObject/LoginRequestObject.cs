@@ -8,7 +8,7 @@ namespace WowGuildApp.RequestObject
 {
     public class LoginRequestObject
     {
-        [Required]
+        [Required, DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required, DataType(DataType.Password)]

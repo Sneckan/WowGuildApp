@@ -28,5 +28,6 @@ namespace WowGuildApp.Data
         }
 
         public DbSet<WowGuildApp.Models.Event> Event { get; set; }
+        public DbSet<WowGuildApp.Models.Signup> Signup { get; set; }
     }
 }
