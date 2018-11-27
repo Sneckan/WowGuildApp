@@ -1,0 +1,166 @@
+﻿@model WowGuildApp.ViewModels.LineupViewModel
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+
+@{
+    ViewData["Title"] = "Lineup";
+}
+
+
+<div>
+    @if(Model.Lineups.Count > 0)
+    {
+        <div>
+            <div class="row">
+                <h2 class="mx-auto">Lineup</h2>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Damage Dealer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Healer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Tank</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+    <div>
+        <div class="row">
+            <h2 class="mx-auto">Signed</h2>
+        </div>
+        <div class="row">
+
+            <div class="col">
+                <h3>Damage Dealer</h3>
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleDps == true))
+                    {
+                        <li class="list-group-item">
+                            @s.User.UserName
+
+                            <form asp-action="Lineup">
+                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
+                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+                                <input asp-for="Lineup.Role" type="hidden" value="1" />
+                                <input type="submit" class="btn btn-primary" value="Add" />
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col">
+                <h3>Healer</h3>
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleHealer == true))
+                    {
+                        <li class="list-group-item">
+                            @s.User.UserName
+                            <form asp-action="Lineup">
+                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
+                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+                                <input asp-for="Lineup.Role" type="hidden" value="2" />
+                                <input type="submit" class="btn btn-primary" value="Add" />
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col">
+                <h3>Tank</h3>
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleTank == true))
+                    {
+                        <li class="list-group-item">
+                            @s.User.UserName
+                            <form asp-action="Lineup">
+                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
+                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+                                <input asp-for="Lineup.Role" type="hidden" value="3" />
+                                <input type="submit" class="btn btn-primary" value="Add" />
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div>
+        
+        <div class=" row">
+            <h2 class="mx-auto">Unsigned</h2>
+        </div>
+        <div class="row">
+
+            <div class="col">
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == false))
+                    {
+                        <li class="list-group-item">
+                            @s.User.UserName
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(function () {
+
+
+            var datatype = 'application/x-www-form-urlencoded; charset=utf-8';
+            $('form').submit(function (e) {
+                e.preventDefault();
+
+                var form = $(this);
+                var url = form.attr('action');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: form.serialize(),
+                    contentType: datatype,
+                    success: function (data) {
+                        console.log(data.success);
+                    },
+                    error: function () {
+                        alert("error");
+                    }
+                });
+                
+            });
+
+        
+    })
+</script>

@@ -32,7 +32,7 @@ namespace WowGuildApp
         {
             List<Event> model;
 
-            model = _context.Event.ToList();
+            model = _context.Events.ToList();
 
             return View(model);
         }
@@ -45,7 +45,7 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-            var @event = await _context.Event
+            var @event = await _context.Events
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
             {
@@ -54,7 +54,7 @@ namespace WowGuildApp
 
             var @host = await _context.Users.FirstOrDefaultAsync(u => u.Id == @event.hostId);
 
-            var @signups = _context.Signup.Where(s => s.EventId == @event.Id).ToList();
+            var @signups = _context.Signups.Where(s => s.EventId == @event.Id).ToList();
 
             foreach (Signup s in signups)
             {
@@ -126,7 +126,7 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-            var @event = await _context.Event.FindAsync(id);
+            var @event = await _context.Events.FindAsync(id);
             if (@event == null)
             {
                 return NotFound();
@@ -186,7 +186,7 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-            var @event = await _context.Event
+            var @event = await _context.Events
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
             {
@@ -203,15 +203,15 @@ namespace WowGuildApp
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Event.FindAsync(id);
-            _context.Event.Remove(@event);
+            var @event = await _context.Events.FindAsync(id);
+            _context.Events.Remove(@event);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool EventExists(int id)
         {
-            return _context.Event.Any(e => e.Id == id);
+            return _context.Events.Any(e => e.Id == id);
         }
 
    
@@ -219,24 +219,24 @@ namespace WowGuildApp
         public IActionResult Signup(Signup signup)
         {
 
-            if(_context.Signup.FirstOrDefault(s => s.EventId==signup.EventId && s.UserId == signup.UserId)==null)
+            if(_context.Signups.FirstOrDefault(s => s.EventId==signup.EventId && s.UserId == signup.UserId)==null)
             {
                 signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
-                signup.Event = _context.Event.FirstOrDefault(e => e.Id == signup.EventId);
+                signup.Event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
                 signup.Sign = true;
 
-                _context.Signup.Add(signup);
+                _context.Signups.Add(signup);
                 _context.SaveChanges();
             }
 
             else
             {
-                var signedUser = _context.Signup.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId);
+                var signedUser = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId);
                 signedUser.Sign = true;
                 signedUser.RoleDps = signup.RoleDps;
                 signedUser.RoleHealer = signup.RoleHealer;
                 signedUser.RoleTank = signup.RoleTank;
-                _context.Signup.Update(signedUser);
+                _context.Signups.Update(signedUser);
                 _context.SaveChanges();
             }
 
@@ -247,27 +247,66 @@ namespace WowGuildApp
         public IActionResult UnSign(Signup signup)
         {
 
-            if (_context.Signup.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId) == null)
+            if (_context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId) == null)
             {
                 signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
-                signup.Event = _context.Event.FirstOrDefault(e => e.Id == signup.EventId);
+                signup.Event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
                 signup.Sign = false;
 
-                _context.Signup.Add(signup);
+                _context.Signups.Add(signup);
                 _context.SaveChanges();
             }
 
             else
             {
-                var signedUser = _context.Signup.FirstOrDefault(s => s.UserId == signup.UserId && s.EventId == signup.EventId);
+                var signedUser = _context.Signups.FirstOrDefault(s => s.UserId == signup.UserId && s.EventId == signup.EventId);
                 signedUser.Sign = false;
 
-                _context.Signup.Update(signedUser);
+                _context.Signups.Update(signedUser);
                 _context.SaveChanges();
             }
             
 
             return RedirectToAction("Details/" + signup.EventId);
+        }
+
+        public async Task<IActionResult> Lineup(int? id)
+        {
+            LineupViewModel model = new LineupViewModel
+            {
+                Event = await _context.Events.FirstOrDefaultAsync(e => e.Id == id),
+                Signups = _context.Signups.Where(s => s.EventId == id).ToList(),
+                Lineups = _context.Lineups.Where(l => l.EventId == id).ToList(),
+            };
+            foreach (Signup s in model.Signups)
+            {
+                s.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == s.UserId);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Lineup(Lineup lineup)
+        {
+
+            if(_context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId) == null)
+            {
+                _context.Lineups.Add(lineup);
+            }
+            else
+            {
+                var existingLineup = _context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId);
+
+                existingLineup.Role = lineup.Role;
+                existingLineup.Group = lineup.Group;
+                _context.Lineups.Update(existingLineup);
+            }
+
+            
+            _context.SaveChanges();
+
+            return Json(new { success = true });
         }
     }
 }

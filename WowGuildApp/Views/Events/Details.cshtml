@@ -23,22 +23,6 @@
         </dt>
         <dd>
             @Model.Event.Date.ToString("dd/MM/yyyy")
-        </dd>
-        <dt>
-            Raidleader
-        </dt>
-        <dd>
-            @Model.Host.UserName
-        </dd>
-        @if (Model.Event.Description != null)
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Event.Description)
-            </dt>
-            <dd>
-                @Model.Event.Description
-            </dd>
-        }
         <dt>
             Invite Time
         </dt>
@@ -57,6 +41,29 @@
         <dd>
             @Model.Event.LastSignup.ToString("HH:mm")
         </dd>
+        <dt>
+            Raidleader
+        </dt>
+        <dd>
+            @Model.Host.UserName
+        </dd>
+        <dt>
+            Signs
+        </dt>
+        <dd>
+            Available: @Model.Signups.Where(s => s.Sign == true).Count()/@Model.Signups.Count()<br />
+            Not Available: @Model.Signups.Where(s => s.Sign == false).Count()/@Model.Signups.Count()
+        </dd>
+
+        @if (Model.Event.Description != null)
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Event.Description)
+            </dt>
+            <dd>
+                @Model.Event.Description
+            </dd>
+        }
     </dl>
 </div>
 <div class="row">
@@ -64,6 +71,7 @@
 
     @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Event.hostId)
     {
+        <a asp-action="Lineup" asp-route-id="@Model.Event.Id" class="btn btn-primary">Lineup</a>
         <a asp-action="Edit" asp-route-id="@Model.Event.Id" class="btn btn-primary">Edit</a>
         <a asp-action="Delete" asp-route-id="@Model.Event.Id" class="btn btn-danger">Delete</a>
     }
