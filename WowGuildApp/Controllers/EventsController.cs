@@ -306,7 +306,18 @@ namespace WowGuildApp
             
             _context.SaveChanges();
 
-            return Json(new { success = true });
+            LineupViewModel model = new LineupViewModel
+            {
+                Event = _context.Events.FirstOrDefault(e => e.Id == lineup.EventId),
+                Signups = _context.Signups.Where(s => s.EventId == lineup.EventId).ToList(),
+                Lineups = _context.Lineups.Where(l => l.EventId == lineup.EventId).ToList(),
+            };
+            foreach (Signup s in model.Signups)
+            {
+                s.User = _context.Users.FirstOrDefault(u => u.Id == s.UserId);
+            }
+
+            return PartialView("_LineupPartial",model);
         }
     }
 }

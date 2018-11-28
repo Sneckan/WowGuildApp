@@ -15,40 +15,8 @@
             <div class="row">
                 <h2 class="mx-auto">Lineup</h2>
             </div>
-            <div class="row">
-                <div class="col">
-                    <h3>Damage Dealer</h3>
-                    <ul class="list-group">
-                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1))
-                        {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div class="col">
-                    <h3>Healer</h3>
-                    <ul class="list-group">
-                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2))
-                        {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div class="col">
-                    <h3>Tank</h3>
-                    <ul class="list-group">
-                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3))
-                        {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
-                        }
-                    </ul>
-                </div>
+            <div class="row" id="lineup-list">
+                @Html.Partial("_LineupPartial",Model)
             </div>
         </div>
     }
@@ -138,28 +106,24 @@
 <script>
     $(function () {
 
+        
+        $('form').submit(function (e) {
+            e.preventDefault();
 
-            var datatype = 'application/x-www-form-urlencoded; charset=utf-8';
-            $('form').submit(function (e) {
-                e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
 
-                var form = $(this);
-                var url = form.attr('action');
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                dataType: "html",
+                success: function (result) {
+                    $('#lineup-list').html(result);
+                }
+            })
 
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: form.serialize(),
-                    contentType: datatype,
-                    success: function (data) {
-                        console.log(data.success);
-                    },
-                    error: function () {
-                        alert("error");
-                    }
-                });
-                
-            });
+        });
 
         
     })

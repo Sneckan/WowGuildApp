@@ -1,0 +1,36 @@
+﻿@model WowGuildApp.ViewModels.LineupViewModel
+
+<div class="col">
+    <h3>Damage Dealer</h3>
+    <ul class="list-group">
+        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1))
+        {
+            <li class="list-group-item">
+                @l.User.UserName
+            </li>
+        }
+    </ul>
+</div>
+<div class="col">
+    <h3>Healer</h3>
+    <ul class="list-group">
+        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2))
+        {
+            <li class="list-group-item">
+                @l.User.UserName
+            </li>
+        }
+    </ul>
+</div>
+<div class="col">
+    <h3>Tank</h3>
+    <ul class="list-group">
+        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3))
+        {
+            <li class="list-group-item">
+                @l.User.UserName
+            </li>
+        }
+    </ul>
+</div>
+
