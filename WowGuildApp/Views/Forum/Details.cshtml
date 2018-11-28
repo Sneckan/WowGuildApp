@@ -1,44 +1,24 @@
-﻿@model WowGuildApp.Models.Post
+﻿@model WowGuildApp.Models.PostsViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
-
-<div class="container" style="background-color: #1d2124;margin-bottom: 10px;@*background-image: url(https://syndicate-wow.com/forum/uploads/monthly_2018_05/news_background_wow.jpg.af82ade8e2857e55f9a9d7c46a6cdace.jpg.3ad1376b5254d5f05f935afc8959de78.jpg)*@">
-    <div class="post-header col" style="color: white;padding: 10px;">
-        <h1 style="color: white;">@Model.Title</h1>
-        <p style="float: left"><a href="@Url.Action("Index", "Forum")">Forum</a> / <a href="@Url.Action("Category", "Forum", new { category = @Model.Category })">@Model.Category</a></p>
-        <p style="float:right;">@Model.Date</p>
-    </div>
-
-    <div style="clear: both"></div>
-
-    <div class="row" style="border-top: 3px solid #373a3e">
-        <div class="user-profile col" style="color: white;padding: 5px;font-size: 14px">
-            <div style="padding: 5px;">
-                <img src="~/images/character.PNG" style="float: left;margin-right: 10px;" />
-                <p style="margin: 0">@Model.User.UserName</p>
-                <p style="margin: 0">Guildrank: Officer</p>
-                <p style="margin: 0">120 Draenei Paladin</p>
-                <p style="margin: 0">ilvl: 381</p>
-                <p style="margin: 0">1400 posts</p>
-            </div>
-        </div>
-
-        <div class="post-content col-9" style="margin: 0;padding: 5px;">
-            @Html.Raw(Model.Content)
-        </div>
-    </div>
-
-
-@foreach (var item in Model.Comments)
+@if (Model.Page == 1)
 {
-    <div class="post-comment" style="background-color: #1d2124;border-top: 3px solid grey;margin-top: 20px;">
-        <div class="row" style="">
+    <div class="container" style="background-color: #1d2124;margin-bottom: 10px;">
+        <div class="post-header col" style="color: white;padding: 10px;">
+            <h1 style="color: white;">@Model.Post.Title</h1>
+            <p style="float: left"><a href="@Url.Action("Index", "Forum")">Forum</a> / <a href="@Url.Action("Category", "Forum", new { category = @Model.Category })">@Model.Category</a></p>
+            <p style="float:right;">@Model.Post.Date</p>
+        </div>
+    
+        <div style="clear: both"></div>
+    
+        <div class="row" style="border-top: 2px solid #373a3e">
             <div class="user-profile col" style="color: white;padding: 5px;font-size: 14px">
                 <div style="padding: 5px;">
                     <img src="~/images/character.PNG" style="float: left;margin-right: 10px;" />
-                    <p style="margin: 0">@Model.User.UserName</p>
+                    <p style="margin: 0">@Model.Post.User.UserName</p>
                     <p style="margin: 0">Guildrank: Officer</p>
                     <p style="margin: 0">120 Draenei Paladin</p>
                     <p style="margin: 0">ilvl: 381</p>
@@ -46,11 +26,121 @@
                 </div>
             </div>
     
-            <div class="post-content col-9" style="margin: 0;padding: 5px;">
-                @item.Text
+            <div class="post-content col-9" style="margin: 0;padding: 10px;">
+                @Html.Raw(Model.Post.Content)
             </div>
         </div>
     </div>
 }
 
+<div style="margin-top: 20px">
+    <div class="paging">
+        <p class="pageCount">Page @Model.Page of @Model.MaxPage</p>
+
+        @if (Model.Page > 1)
+        {
+            <div class="previousPage">
+                @Html.ActionLink("<<", "Details", new { id = Model.Post.Id, page = 1 })
+                @Html.ActionLink("Prev", "Details", new { id = Model.Post.Id, page = (Model.Page - 1) })
+            </div>
+        }
+
+        <ul class="pagination">
+            @{ 
+                var minRange = Math.Max(1, Model.Page -2);
+                var maxRange = Math.Min(Model.MaxPage, Model.Page + 2);
+            }
+
+            @for (int i = minRange; i <= maxRange; i++)
+            {
+                var active = "";
+
+                if (i == Model.Page)
+                {
+                    active = "activePage";
+                }
+
+                <li class="@active">@Html.ActionLink(@i.ToString(), "Details", "Forum", new { id = Model.Post.Id, page = @i }, null)</li>
+            }
+        </ul>
+
+        @if (Model.Page < Model.MaxPage)
+        {
+            <div class="nextPage">
+                @Html.ActionLink("Next", "Details", new { id = Model.Post.Id, page = (Model.Page + 1) })
+                @Html.ActionLink(">>", "Details", new { id = Model.Post.Id, page = Model.MaxPage })
+            </div>
+        }
 </div>
+
+    @foreach (var item in Model.Comments)
+    {
+        <div style="background-color: #171a1c;padding: 5px 10px 5px 10px;">
+            <p style="display: inline-block;line-height: 0px">@item.Date</p>
+            <p style="display: inline-block;float: right">#@(Model.Post.Comments.FindIndex(p => p.Id == item.Id) + 1)</p>
+        </div>
+
+        <div class="post-comment" style="background-color: #1d2124;padding: 20px">
+            <div class="row">
+                <div class="user-profile col" style="color: white;padding: 5px;font-size: 14px;">
+                    <div style="padding: 5px;">
+                        <img src="~/images/character.PNG" style="float: left;margin-right: 10px;" />
+                        <p style="margin: 0">@Model.Post.User.UserName</p>
+                        <p style="margin: 0">Guildrank: Officer</p>
+                        <p style="margin: 0">120 Draenei Paladin</p>
+                        <p style="margin: 0">ilvl: 381</p>
+                        <p style="margin: 0">1400 posts</p>
+                    </div>
+                </div>
+
+                <div class="post-content col-9" style="margin: 0;padding: 10px;">
+                    @Html.Raw(item.Text)
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div style="background-color: #1d2124;margin-top: 20px;padding: 20px;">
+    <form asp-controller="Forum" asp-action="Details" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            @Html.TextAreaFor(model => model.Text)
+            @*<span asp-validation-for="@Model.Text" class="text-danger"></span>*@
+        </div>
+        <input type="hidden" value="@Model.Post.Id" asp-for="@Model.Comment.PostId" />
+        <div class="form-group" style="text-align: right">
+            <input type="submit" value="Post reply" class="btn btn-outline-light" />
+        </div>
+    </form>
+</div>
+
+<script src="~/js/tinymce/tinymce.min.js"></script>
+<script type="text/javascript">
+    // Initialize your tinyMCE Editor with your preferred options
+    tinymce.init({
+        setup: function (editor) {
+            editor.on('change', function () {
+                console.log("hey");
+                tinyMCE.triggerSave();
+            });
+        },
+        selector: 'textarea',
+        height: 150,
+        width: '100%',
+        theme: 'modern',
+        skin: 'charcoal',
+        branding: false,
+        plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern help',
+        toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
+        image_advtab: true,
+        templates: [
+            { title: 'Test template 1', content: 'Test 1' },
+            { title: 'Test template 2', content: 'Test 2' }
+        ],
+        content_css: [
+            '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+            '//www.tinymce.com/css/codepen.min.css'
+        ]
+    });
+</script>

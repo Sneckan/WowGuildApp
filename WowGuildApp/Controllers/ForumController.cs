@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 using WowGuildApp.Data;
 using WowGuildApp.Models;
 
@@ -56,7 +58,7 @@ namespace WowGuildApp
         }
 
         // GET: Forum/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int page = 1)
         {
             if (id == null)
             {
@@ -65,15 +67,51 @@ namespace WowGuildApp
 
             var post = await db.Posts
                 .Include(p => p.User).Include(p => p.Comments).FirstOrDefaultAsync(m => m.Id == id);
+
+            var pageSize = 10;
+            var skip = pageSize * (page - 1);
+            var totalOfComments = db.Comments.Where(c => c.PostId == post.Id).Count();
+            var canPage = skip < totalOfComments;
+
+            PostsViewModel viewModel = new PostsViewModel();
+            viewModel.Post = post;
+            viewModel.Category = post.Category;
+            viewModel.PageSize = pageSize;
+            viewModel.Skip = skip;
+            viewModel.MaxPage = (totalOfComments / pageSize) + ((totalOfComments % pageSize) > 0 ? 1 : 1);
+            viewModel.Page = page;
+            List<Comment> comments = new List<Comment>();
+
+            if (page <= 1)
+            {
+                viewModel.Page = 1;
+                comments = db.Comments.Where(c => c.PostId == post.Id).Take(pageSize).ToList();
+            }
+
+            else
+            {
+                if (canPage)
+                {
+                    comments = db.Comments.Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
+                }
+                else
+                {
+                    comments = db.Comments.Where(c => c.PostId == post.Id).OrderByDescending(c => c.Date).Take(pageSize).OrderBy(c => c.Date).ToList();
+                }
+            }
+
+            viewModel.Comments = comments;
+
             if (post == null)
             {
                 return NotFound();
             }
 
-            return View(post);
+            return View(viewModel);
         }
 
         // GET: Forum/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -82,6 +120,7 @@ namespace WowGuildApp
         // POST: Forum/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Category,Content,Date")] Post post)
@@ -97,6 +136,7 @@ namespace WowGuildApp
             return View(post);
         }
 
+        [Authorize]
         // GET: Forum/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -116,6 +156,7 @@ namespace WowGuildApp
         // POST: Forum/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Category,Content,Date")] Post post)
@@ -151,6 +192,7 @@ namespace WowGuildApp
         }
 
         // GET: Forum/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -169,6 +211,7 @@ namespace WowGuildApp
         }
 
         // POST: Forum/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -177,6 +220,28 @@ namespace WowGuildApp
             db.Posts.Remove(post);
             await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(PostsViewModel viewModel)
+        {
+            var post = db.Posts.Include(p => p.User).Include(p => p.Comments).Single(p => p.Id == viewModel.Comment.PostId);
+            viewModel.Post = post;
+
+            if (ModelState.IsValid)
+            {
+                Comment comment = new Comment();
+                comment.Text = viewModel.Text;
+                comment.Date = DateTime.Now;
+                comment.PostId = viewModel.Comment.PostId;
+                db.Add(comment);
+                await db.SaveChangesAsync();
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+
+            return View(viewModel);
         }
 
         private bool PostExists(int id)

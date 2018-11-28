@@ -14,7 +14,6 @@ namespace WowGuildApp.Controllers
     public class PostsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<User> _userManager;
 
         public PostsController(ApplicationDbContext context)
         {

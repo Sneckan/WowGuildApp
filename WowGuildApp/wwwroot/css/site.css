@@ -10,8 +10,16 @@ footer {
     text-align: center;
 }
 
-p {
+p, a {
     font-family: 'Montserrat', sans-serif;
+}
+
+hr {
+    border-color: lightgray;
+}
+
+.forum-categories a {
+    color: lightblue;
 }
 
 /* Wrapping element */
@@ -35,6 +43,54 @@ p {
 /* QR code generator */
 #qrCode {
     margin: 15px;
+}
+
+.paging {
+    background-color: #171a1c;
+    padding: 10px;
+    border-bottom: 2px solid #373a3e;
+    text-align: right;
+}
+
+.pagination {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination li {
+    display: inline-block;
+    border: 1px solid grey;
+    background-color: white;
+}
+
+    .pagination li a {
+        padding: 5px;
+        color: grey;
+    }
+
+.pageCount {
+    margin-right: 10px;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 0px;
+}
+
+.nextPage, .previousPage {
+    display: inline-block;
+}
+
+    .nextPage a, .previousPage a {
+        padding: 5px;
+        color: lightgrey !important;
+    }
+
+.activePage {
+    background-color: black !important;
+}
+
+.activePage a {
+    color: white !important;
 }
 
 /* Hide/rearrange for smaller screens */

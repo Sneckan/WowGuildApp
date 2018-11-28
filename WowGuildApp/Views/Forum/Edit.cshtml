@@ -46,7 +46,7 @@
 
 <!-- TinyMCE Script Reference -->
 @*<script src="~/scripts/tinymce/tinymce.min.js"></script>*@
-<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+<script src="~/js/tinymce/tinymce.min.js"></script>
 <!-- Script to wire up your TinyMCE editor -->
 <script type="text/javascript">
     // Initialize your tinyMCE Editor with your preferred options
@@ -55,6 +55,7 @@
         height: 500,
         width: 500,
         theme: 'modern',
+        branding: false,
         plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern help',
         toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
         image_advtab: true,

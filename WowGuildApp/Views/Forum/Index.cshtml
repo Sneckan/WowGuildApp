@@ -4,83 +4,60 @@
     ViewData["Title"] = "Forum";
 }
 
-<h1>Forum</h1>
+<div class="container">
+    <h1>Forum</h1>
 
-<table class="table">
-    <thead style="border: none"> 
-        <tr>
-            <th style="border: none">Category</th>
-            <th style="border: none">Latest post</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            foreach (var category in Model.Categories)
-            {
-                foreach (var post in Model.LatestPosts)
+    <style>
+        .forum-categories tr td {
+            border-top: 2px solid;
+            border-color: #171a1c !important;
+        }
+    </style>
+
+    <table class="table forum-categories">
+        <thead style="border: none"> 
+            <tr>
+                <th style="border: none">Category</th>
+                <th style="border: none;">
+                    <div style="float: right;width: 200px;">
+                        Latest post
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var category in Model.Categories)
                 {
-                    if (category == post.Category)
-                    {
-                        <tr>
-                            <td style="font-size: 24px;">
-                                <a href="@Url.Action("Category", "Forum", new { category = @category })">@category</a>
-                            </td>
-                            <td style="font-size: 14px;">
-                                <a href="@Url.Action("Details", "Forum", new { id = post.Id })">@post.Title</a>
-                                <p style="margin: 0;padding: 0;">by <a href="/Profile/@post.User.UserName">@Html.DisplayFor(modelItem => post.User.UserName)</a></p>
-                                <p>@post.Date</p>
-                            </td>
-                        </tr>
-                    }
+                    <tr>
+                        <td>
+                            <img src="https://seeklogo.com/images/W/World_of_Warcraft_Horde_PvP-logo-E1C4DB80A9-seeklogo.com.png" style="width:50px;height:60px;display: inline-block;margin-right: 10px;"/>
+                            <div style="display: inline-block;vertical-align: top;">
+                                <a href="@Url.Action("Category", "Forum", new { category = @category })"><h3>@category</h3></a>
+                                <p>Description</p>
+                            </div>
+                        </td>
+
+                        @{
+                            var post = Model.LatestPosts.Where(p => p.Category == category).SingleOrDefault();
+                            if (post != null)
+                            {
+                                <td style="font-size: 14px;">
+                                    <div style="float: right;width:200px;">
+                                        <a href="@Url.Action("Details", "Forum", new { id = post.Id })">@post.Title</a>
+                                        <p style="margin: 0;padding: 0;">by <a href="/Profile/@post.User.UserName">@Html.DisplayFor(modelItem => post.User.UserName)</a></p>
+                                        <p style="margin: 0;padding: 0;">@post.Date</p>
+                                    </div>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
                 }
             }
-        }
-    </tbody>
-</table>
-
-@*<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>*@
+        </tbody>
+    </table>
+</div>
