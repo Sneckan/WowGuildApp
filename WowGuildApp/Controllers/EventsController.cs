@@ -319,5 +319,36 @@ namespace WowGuildApp
 
             return PartialView("_LineupPartial",model);
         }
+
+        public IActionResult OfficerNote()
+        {
+            var model = new Lineup { };
+
+            return PartialView("_OfficerNoteModal", model);
+        }
+
+        [HttpPost]
+        public IActionResult OfficerNote(Lineup lineup)
+        {
+
+
+            var existingLineup = _context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId);
+            existingLineup.OfficerNote = lineup.OfficerNote;    
+            _context.Lineups.Update(existingLineup);
+            _context.SaveChanges();
+
+            LineupViewModel model = new LineupViewModel
+            {
+                Event = _context.Events.FirstOrDefault(e => e.Id == lineup.EventId),
+                Signups = _context.Signups.Where(s => s.EventId == lineup.EventId).ToList(),
+                Lineups = _context.Lineups.Where(l => l.EventId == lineup.EventId).ToList(),
+            };
+            foreach (Signup s in model.Signups)
+            {
+                s.User = _context.Users.FirstOrDefault(u => u.Id == s.UserId);
+            }
+
+            return PartialView("_LineupPartial", model);
+        }
     }
 }

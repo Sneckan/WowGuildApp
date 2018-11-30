@@ -17,5 +17,8 @@ namespace WowGuildApp.Models
 
         public int Role { get; set; }
         public int Group { get; set; }
+
+        public string OfficerNote { get; set; }
+        public string Note { get; set; }
     }
 }

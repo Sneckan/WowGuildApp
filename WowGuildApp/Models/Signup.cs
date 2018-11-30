@@ -20,5 +20,7 @@ namespace WowGuildApp.Models
         public bool RoleDps { get; set; }
         public bool RoleHealer { get; set; }
         public bool RoleTank { get; set; }
+
+        public string Note { get; set; }
     }
 }

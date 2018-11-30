@@ -1,36 +1,134 @@
 ﻿@model WowGuildApp.ViewModels.LineupViewModel
 
-<div class="col">
-    <h3>Damage Dealer</h3>
-    <ul class="list-group">
-        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1))
-        {
-            <li class="list-group-item">
-                @l.User.UserName
-            </li>
-        }
-    </ul>
-</div>
-<div class="col">
-    <h3>Healer</h3>
-    <ul class="list-group">
-        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2))
-        {
-            <li class="list-group-item">
-                @l.User.UserName
-            </li>
-        }
-    </ul>
-</div>
-<div class="col">
-    <h3>Tank</h3>
-    <ul class="list-group">
-        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3))
-        {
-            <li class="list-group-item">
-                @l.User.UserName
-            </li>
-        }
-    </ul>
-</div>
+@if (Model.Lineups.Count > 0)
+{
+    if (Model.Lineups.Where(l => l.Group == 1).ToList().Count > 0)
+    {
+        <div>
+            <div class="row">
+                <h2 class="mx-auto">Group 1</h2>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Damage Dealer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group==1))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Healer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == 1))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Tank</h3>
+                    <div class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == 1))
+                        {
+
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    if (Model.Lineups.Where(l => l.Group == 2).ToList().Count > 0)
+    {
+        <div>
+            <div class="row">
+                <h2 class="mx-auto">Group 2</h2>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Damage Dealer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == 2))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Healer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == 2))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Tank</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == 2))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+    if (Model.Lineups.Where(l => l.Group == -1).ToList().Count > 0)
+    {
+        <div>
+            <div class="row">
+                <h2 class="mx-auto">Reserve</h2>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Damage Dealer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == -1))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Healer</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == -1))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Tank</h3>
+                    <ul class="list-group">
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == -1))
+                        {
+                            <li class="list-group-item">
+                                @l.User.UserName
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+}
 

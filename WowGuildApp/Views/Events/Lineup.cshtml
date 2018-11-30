@@ -9,17 +9,10 @@
 
 
 <div>
-    @if(Model.Lineups.Count > 0)
-    {
-        <div>
-            <div class="row">
-                <h2 class="mx-auto">Lineup</h2>
-            </div>
-            <div class="row" id="lineup-list">
-                @Html.Partial("_LineupPartial",Model)
-            </div>
-        </div>
-    }
+    <div id="lineup-list">
+        @await Html.PartialAsync("_LineupPartial",Model)
+    </div>
+    
     <div>
         <div class="row">
             <h2 class="mx-auto">Signed</h2>
@@ -34,10 +27,15 @@
                         <li class="list-group-item">
                             @s.User.UserName
 
-                            <form asp-action="Lineup">
+                            <form asp-action="Lineup" class="form-inline lineup-form">
                                 <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
                                 <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
                                 <input asp-for="Lineup.Role" type="hidden" value="1" />
+                                <select asp-for="Lineup.Group" class="form-control">
+                                    <option value="1">Group 1</option>
+                                    <option value="2">Group 2</option>
+                                    <option value="-1">Reserve</option>
+                                </select>
                                 <input type="submit" class="btn btn-primary" value="Add" />
                             </form>
                         </li>
@@ -51,10 +49,15 @@
                     {
                         <li class="list-group-item">
                             @s.User.UserName
-                            <form asp-action="Lineup">
+                            <form asp-action="Lineup" class="form-inline lineup-form">
                                 <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
                                 <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
                                 <input asp-for="Lineup.Role" type="hidden" value="2" />
+                                <select asp-for="Lineup.Group" class="form-control">
+                                    <option value="1">Group 1</option>
+                                    <option value="2">Group 2</option>
+                                    <option value="-1">Reserve</option>
+                                </select>
                                 <input type="submit" class="btn btn-primary" value="Add" />
                             </form>
                         </li>
@@ -67,14 +70,30 @@
                     @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleTank == true))
                     {
                         <li class="list-group-item">
-                            @s.User.UserName
-                            <form asp-action="Lineup">
-                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
-                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
-                                <input asp-for="Lineup.Role" type="hidden" value="3" />
-                                <input type="submit" class="btn btn-primary" value="Add" />
-                            </form>
+
+                            <div>
+                                @s.User.UserName
+                                @if (s.Note != null)
+                                {
+                                    <p>
+                                        @s.Note
+                                    </p>
+                                }
+
+                                <form asp-action="Lineup" class="form-inline lineup-form">
+                                    <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
+                                    <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+                                    <input asp-for="Lineup.Role" type="hidden" value="3" />
+                                    <select asp-for="Lineup.Group" class="form-control">
+                                        <option value="1">Group 1</option>
+                                        <option value="2">Group 2</option>
+                                        <option value="-1">Reserve</option>
+                                    </select>
+                                    <input type="submit" class="btn btn-primary" value="Add" />
+                                </form>
+                            </div>
                         </li>
+                        
                     }
                 </ul>
             </div>
@@ -82,7 +101,7 @@
     </div>
     <hr />
     <div>
-        
+
         <div class=" row">
             <h2 class="mx-auto">Unsigned</h2>
         </div>
@@ -102,12 +121,14 @@
 
     </div>
 </div>
+@section Scripts{ 
+<script src="~/lib/jquery-unobtrusive-ajax/jquery.unobtrusive-ajax.js"></script>
 
 <script>
     $(function () {
 
         
-        $('form').submit(function (e) {
+        $('form.lineup-form').submit(function (e) {
             e.preventDefault();
 
             var form = $(this);
@@ -117,7 +138,6 @@
                 url: url,
                 type: "POST",
                 data: form.serialize(),
-                dataType: "html",
                 success: function (result) {
                     $('#lineup-list').html(result);
                 }
@@ -125,6 +145,39 @@
 
         });
 
-        
+
+        var placeHolderElement = $("#officer-not-modal");
+        $('div[data-toggle="ajax-modal"]').click(function (event) {
+            var url = $(this).data('url');
+            $.get(url).done(function (data) {
+                placeHolderElement.html(data);
+                placeHolderElement.find(".modal").modal("show");
+
+            });
+
+        });
+
+        $('form.officer-note-form').submit(function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function (result) {
+                    //$('.officer-note-modal').modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    $('#lineup-list').html(result);
+                    
+                }
+            })
+
+        });
     })
 </script>
+
+}

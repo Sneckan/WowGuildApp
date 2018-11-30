@@ -1,0 +1,19 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Lineup
+
+<div class="list-group-item" data-toggle="modal" data-target="#signup-tank-@Model.Id">
+    <div>
+
+        @Model.User.UserName
+        @if (Model.OfficerNote != null)
+        {
+            <p>
+                @Model.OfficerNote
+            </p>
+        }
+    </div>
+</div>
+
+@await Html.PartialAsync("_OfficerNoteModal", Model)
