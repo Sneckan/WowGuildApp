@@ -33,8 +33,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
+    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
-    <PackageReference Include="ReflectionIT.Mvc.Paging" Version="3.3.0" />
+    <PackageReference Include="Owin.Security.Providers.BattleNet" Version="2.25.0" />
     <PackageReference Include="TinyMCE" Version="4.8.5" />
   </ItemGroup>
 

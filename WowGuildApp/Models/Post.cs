@@ -16,6 +16,7 @@ namespace WowGuildApp.Models
     public string Category { get; set; }
     public string Content { get; set; }
     public DateTime Date { get; set; }
+    public int ViewCount { get; set; }
     
     public List<Comment> Comments { get; set; }
     public string UserId { get; set; }

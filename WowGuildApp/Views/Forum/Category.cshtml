@@ -4,9 +4,63 @@
     ViewData["Title"] = Model.Category;
 }
 
-<h1>@Model.Category</h1>
+<div style="background-color: #171a1c;">
+    <div style="float: left;padding: 10px">
+        <a class="btn btn-primary create-post" title="Create new post" asp-action="Create">Create new post <i class="fas fa-plus"></i></a>
+    </div>
+    @Html.Partial("_PostPagingPartial", Model)
+</div>
 
-@foreach (var item in Model.Posts)
-{
-    <p>@item.Title</p>
-}
+<style>
+    .forum-posts tr td {
+        border-top: 2px solid;
+        border-color: #171a1c !important;
+    }
+
+    thead tr th {
+        border: none !important;
+    }
+</style>
+
+<div class="container" style="background-color: #1d2124;padding: 10px;">
+    <h1>@Model.Category</h1>
+
+    <table class="table forum-posts">
+        <thead>
+            <tr>
+                <th>
+                    Post
+                </th>
+                <th>
+                    Replies / Views
+                </th>
+                <th>
+                    Latest post
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var item in Model.Posts)
+                {
+                    <tr style="font-size: 14px">
+                        <td>
+                            <div>
+                                <a style="font-size:18px" href="@Url.Action("Details", "Forum", new { id = item.Id })">@item.Title</a>
+                                <p>Started by <a href="/Profile/@item.User.UserName">@item.User.UserName</a></p>
+                                <p style="line-height: 0px">@item.Date.ToString("MMMM") @item.Date.Day @item.Date.Year, @item.Date.ToString("HH:mm:ss")</p>
+                            </div>
+                        </td>
+                        <td>
+                            <p style="margin: 0">Replies: @item.Comments.Count()</p>
+                            <p>Views: @item.ViewCount</p>
+                        </td>
+                        <td>
+                            <p>Latest post by</p>
+                        </td>
+                    </tr>
+                }
+              }
+         </tbody>
+    </table>
+</div>

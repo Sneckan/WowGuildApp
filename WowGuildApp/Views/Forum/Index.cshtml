@@ -46,7 +46,7 @@
                                     <div style="float: right;width:200px;">
                                         <a href="@Url.Action("Details", "Forum", new { id = post.Id })">@post.Title</a>
                                         <p style="margin: 0;padding: 0;">by <a href="/Profile/@post.User.UserName">@Html.DisplayFor(modelItem => post.User.UserName)</a></p>
-                                        <p style="margin: 0;padding: 0;">@post.Date</p>
+                                        <p style="margin: 0;padding: 0;">@post.Date.ToString("MMMM") @post.Date.Day @post.Date.Year, @post.Date.ToString("HH:mm:ss")</p>
                                     </div>
                                 </td>
                             }

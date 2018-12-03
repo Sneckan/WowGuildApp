@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ReflectionIT.Mvc.Paging;
 using WowGuildApp.Data;
 using WowGuildApp.Models;
 
@@ -26,11 +25,32 @@ namespace WowGuildApp
         }
 
         [Route("Forum/Categories/{category}")]
-        public IActionResult Category(string category)
+        public IActionResult Category(string category, int page = 1)
         {
+            var pageSize = 5;
+            var skip = pageSize * (page - 1);
+            var totalOfPosts = db.Posts.Where(p => p.Category == category).Count();
+            var canPage = skip < totalOfPosts;
+
+            List<Post> postsList = new List<Post>();
             PostsViewModel viewModel = new PostsViewModel();
-            viewModel.Posts = db.Posts.Where(p => p.Category == category).ToList();
+            viewModel.PageSize = pageSize;
+            viewModel.Skip = skip;
+            viewModel.MaxPage = (totalOfPosts / pageSize) + ((totalOfPosts % pageSize) > 0 ? 1 : 1);
+            viewModel.Page = page;
+
+            if (canPage)
+            {
+                postsList = db.Posts.Include(p => p.User).Include(p => p.Comments).Where(p => p.Category == category).Skip(skip).Take(pageSize).ToList();
+            }
+            else
+            {
+                postsList = db.Posts.Include(p => p.User).Include(p => p.Comments).Where(p => p.Category == category).OrderByDescending(p => p.Date).Take(pageSize).ToList();
+            }
+
+            viewModel.Posts = postsList;
             viewModel.Category = category;
+
 
             return View(viewModel);
         }
@@ -68,11 +88,15 @@ namespace WowGuildApp
             var post = await db.Posts
                 .Include(p => p.User).Include(p => p.Comments).FirstOrDefaultAsync(m => m.Id == id);
 
+            if (post == null)
+            {
+                return NotFound();
+            }
+
             var pageSize = 10;
             var skip = pageSize * (page - 1);
             var totalOfComments = db.Comments.Where(c => c.PostId == post.Id).Count();
             var canPage = skip < totalOfComments;
-
             PostsViewModel viewModel = new PostsViewModel();
             viewModel.Post = post;
             viewModel.Category = post.Category;
@@ -82,29 +106,58 @@ namespace WowGuildApp
             viewModel.Page = page;
             List<Comment> comments = new List<Comment>();
 
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user != null)
+            {
+
+                viewModel.CurrentUser = user.Id;
+                post.ViewCount = post.ViewCount + 1;
+                db.Update(post);
+                await db.SaveChangesAsync();
+            }
+
             if (page <= 1)
             {
                 viewModel.Page = 1;
-                comments = db.Comments.Where(c => c.PostId == post.Id).Take(pageSize).ToList();
+                comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Take(pageSize).ToList();
             }
 
             else
             {
                 if (canPage)
                 {
-                    comments = db.Comments.Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
+                    comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
                 }
                 else
                 {
-                    comments = db.Comments.Where(c => c.PostId == post.Id).OrderByDescending(c => c.Date).Take(pageSize).OrderBy(c => c.Date).ToList();
+                    comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).OrderByDescending(c => c.Date).Take(pageSize).OrderBy(c => c.Date).ToList();
                 }
             }
 
             viewModel.Comments = comments;
 
-            if (post == null)
+            return View(viewModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(PostsViewModel viewModel)
+        {
+            var post = db.Posts.Include(p => p.User).Include(p => p.Comments).Single(p => p.Id == viewModel.Comment.PostId);
+            viewModel.Post = post;
+
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                Comment comment = new Comment();
+                comment.Text = viewModel.Text;
+                comment.Date = DateTime.Now;
+                comment.PostId = viewModel.Comment.PostId;
+                comment.UserId = user.Id; 
+                db.Add(comment);
+                await db.SaveChangesAsync();
+                return Redirect(viewModel.ReturnUrl + "#post" + comment.Id);
             }
 
             return View(viewModel);
@@ -123,15 +176,16 @@ namespace WowGuildApp
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Category,Content,Date")] Post post)
+        public async Task<IActionResult> Create([Bind("Id,Title,Category,Content")] Post post)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(HttpContext.User);
                 post.UserId = user.Id;
+                post.Date = DateTime.Now;
                 db.Add(post);
                 await db.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Forum", new { id = post.Id });
             }
             return View(post);
         }
@@ -145,11 +199,20 @@ namespace WowGuildApp
                 return NotFound();
             }
 
+
             var post = await db.Posts.FindAsync(id);
             if (post == null)
             {
                 return NotFound();
             }
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (post.UserId != user.Id)
+            {
+                return RedirectToAction("Details", "Forum", new { id = post.Id });
+            }
+
             return View(post);
         }
 
@@ -186,7 +249,7 @@ namespace WowGuildApp
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Forum", new { id = post.Id });
             }
             return View(post);
         }
@@ -207,6 +270,13 @@ namespace WowGuildApp
                 return NotFound();
             }
 
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (post.UserId != user.Id)
+            {
+                return RedirectToAction("Details", "Forum", new { id = post.Id });
+            }
+
             return View(post);
         }
 
@@ -220,28 +290,6 @@ namespace WowGuildApp
             db.Posts.Remove(post);
             await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details(PostsViewModel viewModel)
-        {
-            var post = db.Posts.Include(p => p.User).Include(p => p.Comments).Single(p => p.Id == viewModel.Comment.PostId);
-            viewModel.Post = post;
-
-            if (ModelState.IsValid)
-            {
-                Comment comment = new Comment();
-                comment.Text = viewModel.Text;
-                comment.Date = DateTime.Now;
-                comment.PostId = viewModel.Comment.PostId;
-                db.Add(comment);
-                await db.SaveChangesAsync();
-                return Redirect(Request.Headers["Referer"].ToString());
-            }
-
-            return View(viewModel);
         }
 
         private bool PostExists(int id)
