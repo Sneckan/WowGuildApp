@@ -14,10 +14,14 @@ namespace WowGuildApp.Models
 
         public int? GetUserPostCount(string userId)
         {
-            var postCount = Posts.Count();/*db.Posts.Where(p => p.UserId == userId).Count();*/
-            //var commentCount = Comments.Count();/*db.Comments.Where(c => c.UserId == userId).Count();*/
+            var postCount = Posts.Count();
+            var commentCount = 0;
+            if (Comments != null)
+            {
+                commentCount = Comments.Count();
+            }
 
-            return postCount;
+            return postCount + commentCount;
         }
     }
 }

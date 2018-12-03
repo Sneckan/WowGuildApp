@@ -64,10 +64,10 @@ namespace WowGuildApp
 
             foreach (var val in Enum.GetValues(typeof(Post.Categories)))
             {
-                var description = EnumExtensions.GetEnumDescription((Post.Categories)val);
-                viewModel.Categories.Add(description);
+                var categoryName = EnumExtensions.DisplayName((Post.Categories)val);
+                viewModel.Categories.Add(categoryName);
 
-                var latestPost = db.Posts.Include(p => p.User).Where(p => p.Category == description).OrderByDescending(p => p.Date).FirstOrDefault();
+                var latestPost = db.Posts.Include(p => p.User).Where(p => p.Category == categoryName).OrderByDescending(p => p.Date).FirstOrDefault();
                 if (latestPost != null)
                 {
                     viewModel.LatestPosts.Add(latestPost);
@@ -109,7 +109,6 @@ namespace WowGuildApp
             var user = await _userManager.GetUserAsync(HttpContext.User);
             if (user != null)
             {
-
                 viewModel.CurrentUser = user.Id;
                 post.ViewCount = post.ViewCount + 1;
                 db.Update(post);
@@ -142,7 +141,7 @@ namespace WowGuildApp
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details(PostsViewModel viewModel)
+        public async Task<IActionResult> CreateComment(PostsViewModel viewModel)
         {
             var post = db.Posts.Include(p => p.User).Include(p => p.Comments).Single(p => p.Id == viewModel.Comment.PostId);
             viewModel.Post = post;
@@ -165,7 +164,7 @@ namespace WowGuildApp
 
         // GET: Forum/Create
         [Authorize]
-        public IActionResult Create()
+        public IActionResult CreatePost()
         {
             return View();
         }
@@ -176,7 +175,7 @@ namespace WowGuildApp
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Category,Content")] Post post)
+        public async Task<IActionResult> CreatePost([Bind("Id,Title,Category,Content")] Post post)
         {
             if (ModelState.IsValid)
             {
@@ -192,7 +191,7 @@ namespace WowGuildApp
 
         [Authorize]
         // GET: Forum/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> EditPost(int? id)
         {
             if (id == null)
             {
@@ -222,7 +221,7 @@ namespace WowGuildApp
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Category,Content,Date")] Post post)
+        public async Task<IActionResult> EditPost(int id, [Bind("Id,Title,Category,Content,Date")] Post post)
         {
             if (id != post.Id)
             {
@@ -235,6 +234,7 @@ namespace WowGuildApp
                 {
                     var user = await _userManager.GetUserAsync(HttpContext.User);
                     post.UserId = user.Id;
+                    post.LastEdited = DateTime.Now;
                     db.Update(post);
                     await db.SaveChangesAsync();
                 }
@@ -254,9 +254,73 @@ namespace WowGuildApp
             return View(post);
         }
 
-        // GET: Forum/Delete/5
         [Authorize]
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Forum/Edit/5
+        public async Task<IActionResult> EditComment(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var comment = await db.Comments.FindAsync(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (comment.UserId != user.Id)
+            {
+                return RedirectToAction("Details", "Forum", new { id = comment.PostId });
+            }
+
+            return View(comment);
+        }
+
+        // POST: Forum/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditComment(int id, [Bind("Id,PostId,Text,Date")] Comment comment)
+        {
+            if (id != comment.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = await _userManager.GetUserAsync(HttpContext.User);
+                    comment.UserId = user.Id;
+                    comment.LastEdited = DateTime.Now;
+                    db.Update(comment);
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PostExists(comment.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details", "Forum", new { id = comment.PostId });
+            }
+            return View(comment);
+        }
+
+        // GET: Forum/DeletePost/5
+        [Authorize]
+        public async Task<IActionResult> DeletePost(int? id)
         {
             if (id == null)
             {
@@ -284,10 +348,49 @@ namespace WowGuildApp
         [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeletePostConfirmed(int id)
         {
             var post = await db.Posts.FindAsync(id);
             db.Posts.Remove(post);
+            await db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Forum/DeleteComment/5
+        [Authorize]
+        public async Task<IActionResult> DeleteComment(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var comment = await db.Comments
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (comment.UserId != user.Id)
+            {
+                return RedirectToAction("Details", "Forum", new { id = comment.PostId });
+            }
+
+            return View(comment);
+        }
+
+        // POST: Forum/Delete/5
+        [Authorize]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCommentConfirmed(int id)
+        {
+            var comment = await db.Comments.FindAsync(id);
+            db.Comments.Remove(comment);
             await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

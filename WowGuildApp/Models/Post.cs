@@ -16,6 +16,7 @@ namespace WowGuildApp.Models
     public string Category { get; set; }
     public string Content { get; set; }
     public DateTime Date { get; set; }
+    public DateTime? LastEdited { get; set; }
     public int ViewCount { get; set; }
     
     public List<Comment> Comments { get; set; }
@@ -24,18 +25,23 @@ namespace WowGuildApp.Models
 
     public enum Categories
     {
-        [Description("News")]
+        [Display(Name="News")]
+          [Description("Guild news")]
         News = 1,
-        [Description("Raid Discussion")]
         [Display(Name="Raid Discussion")]
+          [Description("Discussion concering raids")]
         RaidDiscussion,
-        [Description("General")]
+        [Display(Name= "General")]
+          [Description("General discussion relating to all things to do with World of Warcraft and the Guild")]
         General,
-        [Description("Classes")]
+        [Display(Name= "Classes")]
+          [Description("Everything regarding classes")]
         Classes,
-        [Description("Off topic")]
+        [Display(Name= "Off topic")]
+          [Description("All off topic discussion in here")]
         OffTopic,
-        [Description("Recruitment")]
+        [Display(Name= "Recruitment")]
+          [Description("Guild recruitment section")]
         Recruitment
     }
   }

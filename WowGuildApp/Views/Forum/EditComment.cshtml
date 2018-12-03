@@ -1,34 +1,28 @@
-﻿@model WowGuildApp.Models.Post
+﻿@model WowGuildApp.Models.Comment
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
-<h2>Create</h2>
+<h2>Edit</h2>
 
-<h4>Post</h4>
+<h4>Comment</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="EditComment">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="PostId" />
+            <input type="hidden" asp-for="Date" />
+            <input type="hidden" asp-for="LastEdited" />
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                <label asp-for="Text" class="control-label"></label>
+                @Html.TextAreaFor(model => model.Text)
+                <span asp-validation-for="Text" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                @Html.DropDownListFor(model => model.Category, new SelectList(Enum.GetValues(typeof(Post.Categories)).OfType<Post.Categories>().Select(m => new { Text = EnumExtensions.GetEnumDescription(m), Value = EnumExtensions.GetEnumDescription(m) }).ToList(), "Value", "Text"), new { @class = "form-control" })
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                @Html.TextAreaFor(model => model.Content)
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </form>
     </div>
@@ -40,7 +34,7 @@
 
 <!-- TinyMCE Script Reference -->
 @*<script src="~/scripts/tinymce/tinymce.min.js"></script>*@
-<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+<script src="~/js/tinymce/tinymce.min.js"></script>
 <!-- Script to wire up your TinyMCE editor -->
 <script type="text/javascript">
     // Initialize your tinyMCE Editor with your preferred options
@@ -49,6 +43,7 @@
         height: 500,
         width: 500,
         theme: 'modern',
+        branding: false,
         plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern help',
         toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
         image_advtab: true,

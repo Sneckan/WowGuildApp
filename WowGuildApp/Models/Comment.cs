@@ -14,6 +14,7 @@ namespace WowGuildApp.Models
     [MaxLength(300,ErrorMessage="Text cannot be greater than 300 characters.")]
     public string Text { get; set; }
     public DateTime Date { get; set; }
+    public DateTime? LastEdited { get; set; }
 
     public int PostId { get; set; }
     public Post Post { get; set; }

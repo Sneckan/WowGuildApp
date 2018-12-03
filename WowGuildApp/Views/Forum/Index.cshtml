@@ -27,19 +27,21 @@
         </thead>
         <tbody>
             @{
-                foreach (var category in Model.Categories)
+                foreach (var val in Enum.GetValues(typeof(Post.Categories)))
                 {
+                    var description = EnumExtensions.GetEnumDescription((Post.Categories)val);
+                    var categoryName = EnumExtensions.DisplayName((Post.Categories)val);
                     <tr>
                         <td>
                             <img src="https://seeklogo.com/images/W/World_of_Warcraft_Horde_PvP-logo-E1C4DB80A9-seeklogo.com.png" style="width:50px;height:60px;display: inline-block;margin-right: 10px;"/>
                             <div style="display: inline-block;vertical-align: top;">
-                                <a href="@Url.Action("Category", "Forum", new { category = @category })"><h3>@category</h3></a>
-                                <p>Description</p>
+                                <a href="@Url.Action("Category", "Forum", new { category = categoryName })"><h3>@categoryName</h3></a>
+                                <p>@description</p>
                             </div>
                         </td>
 
                         @{
-                            var post = Model.LatestPosts.Where(p => p.Category == category).SingleOrDefault();
+                            var post = Model.LatestPosts.Where(p => p.Category == categoryName).SingleOrDefault();
                             if (post != null)
                             {
                                 <td style="font-size: 14px;">

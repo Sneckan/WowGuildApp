@@ -13,8 +13,8 @@
             <p><a href="@Url.Action("Index", "Forum")">Forum</a> / <a href="@Url.Action("Category", "Forum", new { category = @Model.Category })">@Model.Category</a></p>
             @if (Model.Post.UserId == Model.CurrentUser)
             {
-                <a class="edit-post" data-toggle="tooltip" title="Edit post" asp-action="Edit" asp-route-id="@Model.Post.Id"><i class="fas fa-edit"></i></a>
-                <a class="delete-post" data-toggle="tooltip" title="Delete post" asp-action="Delete" asp-route-id="@Model.Post.Id"><i class="fas fa-trash-alt"></i></a>
+                <a class="edit-post" data-toggle="tooltip" title="Edit post" asp-action="EditPost" asp-route-id="@Model.Post.Id"><i class="fas fa-edit"></i></a>
+                <a class="delete-post" data-toggle="tooltip" title="Delete post" asp-action="DeletePost" asp-route-id="@Model.Post.Id"><i class="fas fa-trash-alt"></i></a>
             }
         </div>
 
@@ -28,12 +28,16 @@
                     <p class="user-guild-rank">Guildrank: Officer</p>
                     <p class="user-class">120 Draenei Paladin</p>
                     <p class="user-ilvl">ilvl: 381</p>
-                    <p class="user-postcount">@Model.Post.User.GetUserPostCount(Model.Post.User.Id) posts</p>
+                    <p class="user-postcount">130 posts</p>
                 </div>
             </div>
 
             <div class="post-content col-9" style="margin: 0;padding: 10px;">
                 @Html.Raw(Model.Post.Content)
+                @if (Model.Post.LastEdited != null)
+                {
+                    <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @Model.Post.LastEdited</p>
+                }
             </div>
         </div>
     </div>
@@ -65,8 +69,13 @@
 
                     <div class="post-content col-9" style="margin: 0;padding: 10px;">
                         @Html.Raw(item.Text)
+                        @if (item.LastEdited != null)
+	                    {
+                            <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @item.LastEdited</p>
+	                    }
                     </div>
                 </div>
+     
                 <div class="reply-wrapper">
                     <div>
                         @if (Model.CurrentUser == item.UserId)
@@ -83,11 +92,11 @@
 </div>
 
 <div style="background-color: #1d2124;margin-top: 20px;padding: 20px;">
-    <form asp-controller="Forum" asp-action="Details" method="post">
-        <div asp-validation-summary="All" class="text-danger"></div>
+    <form asp-controller="Forum" asp-action="CreateComment" method="post">
+        @*<div asp-validation-summary="All" class="text-danger"></div>*@
+        <span asp-validation-for="@Model.Text" class="text-danger"></span>
         <div class="form-group">
             @Html.TextAreaFor(model => model.Text)
-            @*<span asp-validation-for="@Model.Text" class="text-danger"></span>*@
         </div>
         <input type="hidden" value="@Model.Post.Id" asp-for="@Model.Comment.PostId" />
         <input type="hidden" value="/Forum/Details/@Model.Post.Id?page=@Model.MaxPage" asp-for="@Model.ReturnUrl" />
