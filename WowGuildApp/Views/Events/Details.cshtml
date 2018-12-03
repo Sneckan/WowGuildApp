@@ -51,6 +51,12 @@
             Signs
         </dt>
         <dd>
+            @if(Model.ConfirmedLineup == true)
+            {
+                <text>
+                Confirmed: @Model.Lineups.Count()/@Model.Signups.Count()<br />
+                </text>
+            }
             Available: @Model.Signups.Where(s => s.Sign == true).Count()/@Model.Signups.Count()<br />
             Not Available: @Model.Signups.Where(s => s.Sign == false).Count()/@Model.Signups.Count()
         </dd>
@@ -69,20 +75,21 @@
 <div class="row">
     <div class="col">
 
-    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Event.hostId)
-    {
-        <a asp-action="Lineup" asp-route-id="@Model.Event.Id" class="btn btn-primary">Lineup</a>
-        <a asp-action="Edit" asp-route-id="@Model.Event.Id" class="btn btn-primary">Edit</a>
-        <a asp-action="Delete" asp-route-id="@Model.Event.Id" class="btn btn-danger">Delete</a>
-    }
-    <a asp-action="Index">Back to List</a>
+        @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Event.hostId)
+        {
+            <a asp-action="Lineup" asp-route-id="@Model.Event.Id" class="btn btn-primary @if(DateTime.Now < Model.Event.LastSignup) {<text>disabled</text>}">Lineup</a>
+            <a asp-action="Edit" asp-route-id="@Model.Event.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Event.Id" class="btn btn-danger">Delete</a>
+        }
+        <a asp-action="Index">Back to List</a>
+
 
     </div>
     <div class="col">
         <form asp-action="UnSign" method="post" class="float-right">
             <input type="hidden" asp-for="Signup.UserId" value="@UserManager.GetUserId(User)" />
             <input type="hidden" asp-for="Signup.EventId" value="@Model.Event.Id" />
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signUpForm" @if(DateTime.Now > Model.Event.LastSignup){ <text>disabled</text>}>Signup</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signUpForm" @if (DateTime.Now > Model.Event.LastSignup) { <text> disabled</text>}>Signup</button>
             <button type="submit" class="btn btn-danger" value="Unsign">Unsign</button>
         </form>
         <div class="modal fade" id="signUpForm" tabindex="-1" role="dialog" aria-labelledby="Sign Up" aria-hidden="true">
@@ -129,69 +136,45 @@
             </div>
         </div>
 
-        
-    </div>
-</div>
-
-<div>
-    
-    <div>
-        <div class="row">
-            <h2 class="mx-auto">Signed</h2>
-        </div>
-        <div class="row">
-            
-            <div class="col">
-                <h3>Damage Dealer</h3>
-                <ul class="list-group">
-                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleDps==true))
-                    {
-                        <li class="list-group-item">
-                            @s.User.UserName
-                        </li>
-                    }
-                </ul>
-            </div>
-            <div class="col">
-                <h3>Healer</h3>
-                <ul class="list-group">
-                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleHealer==true))
-                    {
-                        <li class="list-group-item">
-                            @s.User.UserName
-                        </li>
-                    }
-                </ul>
-            </div>
-            <div class="col">
-                <h3>Tank</h3>
-                <ul class="list-group">
-                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true &&s.RoleTank==true))
-                    {
-                        <li class="list-group-item">
-                            @s.User.UserName
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-        <hr />
-        <div class=" row">
-            <h2 class="mx-auto">Unsigned</h2>
-        </div>
-        <div class="row">
-            
-            <div class="col">
-                <ul class="list-group">
-                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == false))
-                    {
-                        <li class="list-group-item">
-                            @s.User.UserName
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
 
     </div>
 </div>
+
+<div id="details-list">
+    @await Html.PartialAsync("_DetailsPartial",Model)
+</div>
+
+
+@section Scripts{
+
+
+    <script>
+        $(function () {
+
+
+
+            $('body').on('submit', 'form.signup-note-form', function (e) {
+
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+
+                $.ajax({
+                url: url,
+                    type: "POST",
+                    data: form.serialize(),
+                    success: function (result) {
+
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+
+                        $('#details-list').html(result);
+
+                    }
+                })
+
+            });
+
+            });
+    </script>
+}

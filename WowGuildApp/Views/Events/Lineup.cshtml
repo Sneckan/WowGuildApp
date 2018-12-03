@@ -12,6 +12,11 @@
     <div id="lineup-list">
         @await Html.PartialAsync("_LineupPartial",Model)
     </div>
+    <br />
+    <div>
+        <a asp-action="ConfirmLineup" asp-route-id="@Model.Event.Id" class="btn btn-primary">Confirm Lineup</a>
+        <a asp-action="Details" asp-route-id="@Model.Event.Id">Back to raid</a>
+    </div>
     
     <div>
         <div class="row">
@@ -26,8 +31,14 @@
                     {
                         <li class="list-group-item">
                             @s.User.UserName
+                            @if (s.Note != null)
+                            {
+                                <p>
+                                    @s.Note
+                                </p>
+                            }
 
-                            <form asp-action="Lineup" class="form-inline lineup-form">
+                            <form asp-action="AddToLineup" class="form-inline lineup-form">
                                 <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
                                 <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
                                 <input asp-for="Lineup.Role" type="hidden" value="1" />
@@ -49,7 +60,13 @@
                     {
                         <li class="list-group-item">
                             @s.User.UserName
-                            <form asp-action="Lineup" class="form-inline lineup-form">
+                            @if (s.Note != null)
+                            {
+                                <p>
+                                    @s.Note
+                                </p>
+                            }
+                            <form asp-action="AddToLineup" method="post" class="form-inline lineup-form">
                                 <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
                                 <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
                                 <input asp-for="Lineup.Role" type="hidden" value="2" />
@@ -80,7 +97,7 @@
                                     </p>
                                 }
 
-                                <form asp-action="Lineup" class="form-inline lineup-form">
+                                <form asp-action="AddToLineup" class="form-inline lineup-form">
                                     <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
                                     <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
                                     <input asp-for="Lineup.Role" type="hidden" value="3" />
@@ -93,7 +110,7 @@
                                 </form>
                             </div>
                         </li>
-                        
+
                     }
                 </ul>
             </div>
@@ -113,6 +130,12 @@
                     {
                         <li class="list-group-item">
                             @s.User.UserName
+                            @if (s.Note != null)
+                            {
+                                <p>
+                                    @s.Note
+                                </p>
+                            }
                         </li>
                     }
                 </ul>
@@ -121,21 +144,24 @@
 
     </div>
 </div>
+
+
 @section Scripts{ 
 
 <script>
     $(function () {
 
         
-        $('form.lineup-form').submit(function (e) {
+        $('body').on('submit', 'form.lineup-form',function (e) {
             e.preventDefault();
 
             var form = $(this);
             var url = form.attr('action');
+            var method = form.attr('method');
 
             $.ajax({
                 url: url,
-                type: "POST",
+                type: method,
                 data: form.serialize(),
                 success: function (result) {
                     $('#lineup-list').html(result);
@@ -146,7 +172,7 @@
 
         
 
-        $('form.officer-note-form').submit(function (e) {
+        $('body').on('submit', 'form.officer-note-form',function (e) {
 
             e.preventDefault();
             var form = $(this);

@@ -12,11 +12,10 @@
                 <div class="col">
                     <h3>Damage Dealer</h3>
                     <ul class="list-group">
-                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group==1))
+                        @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == 1))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>
@@ -25,9 +24,8 @@
                     <ul class="list-group">
                         @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == 1))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>
@@ -56,9 +54,8 @@
                     <ul class="list-group">
                         @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == 2))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>
@@ -67,9 +64,8 @@
                     <ul class="list-group">
                         @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == 2))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>
@@ -78,9 +74,8 @@
                     <ul class="list-group">
                         @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == 2))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>
@@ -99,9 +94,8 @@
                     <ul class="list-group">
                         @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == -1))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>
@@ -110,9 +104,8 @@
                     <ul class="list-group">
                         @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == -1))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>
@@ -121,9 +114,8 @@
                     <ul class="list-group">
                         @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == -1))
                         {
-                            <li class="list-group-item">
-                                @l.User.UserName
-                            </li>
+                            @await Html.PartialAsync("_OfficerNotePartial", l)
+
                         }
                     </ul>
                 </div>

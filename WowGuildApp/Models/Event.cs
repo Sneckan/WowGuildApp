@@ -32,6 +32,8 @@ namespace WowGuildApp.Models
         public virtual User host { get; set; }
 
         public virtual  List<Signup> Signups { get; set; }
+        public bool ConfirmedLineup { get; set; }
+        public virtual List<Lineup> Lineup { get; set; }
 
     }
 }
