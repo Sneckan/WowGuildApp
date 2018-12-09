@@ -9,7 +9,7 @@ $('.reply-with-quote').click(function () {
     var text = $(this).closest(".post-comment").find(".post-content");
     var anchor = $(this).closest(".post-comment-wrapper").find(".post-comment-url").attr("href");
     var clone = text.clone();
-    clone.find(".quote").remove();
+    clone.find(".quote, .last-edited").remove();
     var quote = clone.html();
     $("html, body").animate({ scrollTop: $(document).height() }, "slow");
     tinymce.activeEditor.setContent('<div class="quote"><a class="go-to-post" data-toggle="tooltip" title="Go to post" href="' + anchor + '">' + '<span class="fas fa-arrow-alt-circle-left"></span></a>Originally posted by: ' + poster + '<br>' + quote + '</div>&#8205;<br> ', { format: 'raw' });

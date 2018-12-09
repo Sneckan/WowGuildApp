@@ -1,40 +1,43 @@
 ﻿@model WowGuildApp.Models.PostsViewModel
 
-<div class="paging">
-    <p class="pageCount">Page @Model.Page of @Model.MaxPage</p>
-
-    @if (Model.Page > 1)
-    {
-        <div class="previousPage">
-            @Html.ActionLink("<<", "Details", new { id = Model.Post.Id, page = 1 })
-            @Html.ActionLink("Prev", "Details", new { id = Model.Post.Id, page = (Model.Page - 1) })
-        </div>
-    }
-
-    <ul class="pagination">
-        @{
-            var minRange = Math.Max(1, Model.Page - 2);
-            var maxRange = Math.Min(Model.MaxPage, Model.Page + 2);
-        }
-
-        @for (int i = minRange; i <= maxRange; i++)
+@if (Model.MaxPage != 0)
+{
+    <div class="paging">
+        <p class="pageCount">Page @Model.Page of @Model.MaxPage</p>
+    
+        @if (Model.Page > 1)
         {
-            var active = "";
-
-            if (i == Model.Page)
-            {
-                active = "activePage";
-            }
-
-            <li class="@active">@Html.ActionLink(@i.ToString(), "Details", "Forum", new { id = Model.Post.Id, page = @i }, null)</li>
+            <div class="previousPage">
+                @Html.ActionLink("<<", "Details", new { id = Model.Post.Id, page = 1 })
+                @Html.ActionLink("Prev", "Details", new { id = Model.Post.Id, page = (Model.Page - 1) })
+            </div>
         }
-    </ul>
-
-    @if (Model.Page < Model.MaxPage)
-    {
-        <div class="nextPage">
-            @Html.ActionLink("Next", "Details", new { id = Model.Post.Id, page = (Model.Page + 1) })
-            @Html.ActionLink(">>", "Details", new { id = Model.Post.Id, page = Model.MaxPage })
-        </div>
-    }
-</div>
+    
+        <ul class="pagination">
+            @{
+                var minRange = Math.Max(1, Model.Page - 2);
+                var maxRange = Math.Min(Model.MaxPage, Model.Page + 2);
+            }
+    
+            @for (int i = minRange; i <= maxRange; i++)
+            {
+                var active = "";
+    
+                if (i == Model.Page)
+                {
+                    active = "activePage";
+                }
+    
+                <li class="@active">@Html.ActionLink(@i.ToString(), "Details", "Forum", new { id = Model.Post.Id, page = @i }, null)</li>
+            }
+        </ul>
+    
+        @if (Model.Page < Model.MaxPage)
+        {
+            <div class="nextPage">
+                @Html.ActionLink("Next", "Details", new { id = Model.Post.Id, page = (Model.Page + 1) })
+                @Html.ActionLink(">>", "Details", new { id = Model.Post.Id, page = Model.MaxPage })
+            </div>
+        }
+    </div>
+}

@@ -36,7 +36,7 @@ namespace WowGuildApp
             PostsViewModel viewModel = new PostsViewModel();
             viewModel.PageSize = pageSize;
             viewModel.Skip = skip;
-            viewModel.MaxPage = (totalOfPosts / pageSize) + ((totalOfPosts % pageSize) > 0 ? 1 : 1);
+            viewModel.MaxPage = (totalOfPosts / pageSize) + ((totalOfPosts % pageSize) > 0 ? 1 : 0);
             viewModel.Page = page;
 
             if (canPage)
@@ -102,7 +102,7 @@ namespace WowGuildApp
             viewModel.Category = post.Category;
             viewModel.PageSize = pageSize;
             viewModel.Skip = skip;
-            viewModel.MaxPage = (totalOfComments / pageSize) + ((totalOfComments % pageSize) > 0 ? 1 : 1);
+            viewModel.MaxPage = (totalOfComments / pageSize) + ((totalOfComments % pageSize) > 0 ? 1 : 0);
             viewModel.Page = page;
             List<Comment> comments = new List<Comment>();
 
@@ -148,7 +148,11 @@ namespace WowGuildApp
 
             if (ModelState.IsValid)
             {
+                //Get user and update its total postcount
                 var user = await _userManager.GetUserAsync(HttpContext.User);
+                user.PostCount++;
+                await _userManager.UpdateAsync(user);
+
                 Comment comment = new Comment();
                 comment.Text = viewModel.Text;
                 comment.Date = DateTime.Now;
@@ -156,6 +160,7 @@ namespace WowGuildApp
                 comment.UserId = user.Id; 
                 db.Add(comment);
                 await db.SaveChangesAsync();
+
                 return Redirect(viewModel.ReturnUrl + "#post" + comment.Id);
             }
 
@@ -179,11 +184,16 @@ namespace WowGuildApp
         {
             if (ModelState.IsValid)
             {
+                //Get user and update its total postcount
                 var user = await _userManager.GetUserAsync(HttpContext.User);
+                user.PostCount++;
+                await _userManager.UpdateAsync(user);
+
                 post.UserId = user.Id;
                 post.Date = DateTime.Now;
                 db.Add(post);
                 await db.SaveChangesAsync();
+
                 return RedirectToAction("Details", "Forum", new { id = post.Id });
             }
             return View(post);
@@ -346,14 +356,22 @@ namespace WowGuildApp
 
         // POST: Forum/Delete/5
         [Authorize]
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeletePost")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePostConfirmed(int id)
         {
             var post = await db.Posts.FindAsync(id);
             db.Posts.Remove(post);
             await db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            //Get user and update its total postcount
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var postCount = db.Posts.Where(p => p.UserId == user.Id).Count();
+            var commentCount = db.Comments.Where(p => p.UserId == user.Id).Count();
+            user.PostCount = postCount + commentCount;
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Category", "Forum", new { category = post.Category });
         }
 
         // GET: Forum/DeleteComment/5
@@ -385,14 +403,20 @@ namespace WowGuildApp
 
         // POST: Forum/Delete/5
         [Authorize]
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCommentConfirmed(int id)
         {
             var comment = await db.Comments.FindAsync(id);
             db.Comments.Remove(comment);
             await db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            //Get user and update its total postcount
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            user.PostCount--;
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Details", "Forum", new { id = comment.PostId });
         }
 
         private bool PostExists(int id)

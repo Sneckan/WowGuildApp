@@ -32,10 +32,7 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<!-- TinyMCE Script Reference -->
-@*<script src="~/scripts/tinymce/tinymce.min.js"></script>*@
 <script src="~/js/tinymce/tinymce.min.js"></script>
-<!-- Script to wire up your TinyMCE editor -->
 <script type="text/javascript">
     // Initialize your tinyMCE Editor with your preferred options
     tinymce.init({
@@ -44,6 +41,7 @@
         width: 500,
         theme: 'modern',
         branding: false,
+        extended_valid_elements: "div[* ],span[* ],a[* ]",
         plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern help',
         toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
         image_advtab: true,

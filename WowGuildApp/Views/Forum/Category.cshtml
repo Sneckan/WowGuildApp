@@ -1,4 +1,6 @@
 ﻿@model PostsViewModel
+@inject SignInManager<User> _signInManager
+@inject UserManager<User> _userManager
 
 @{
     ViewData["Title"] = Model.Category;
@@ -10,17 +12,6 @@
     </div>
     @Html.Partial("_PostPagingPartial", Model)
 </div>
-
-<style>
-    .forum-posts tr td {
-        border-top: 2px solid;
-        border-color: #171a1c !important;
-    }
-
-    thead tr th {
-        border: none !important;
-    }
-</style>
 
 <div class="container" style="background-color: #1d2124;padding: 10px;">
     <h1>@Model.Category</h1>
@@ -35,7 +26,7 @@
                     Replies / Views
                 </th>
                 <th>
-                    Latest post
+                    Latest post by
                 </th>
             </tr>
         </thead>
@@ -44,7 +35,7 @@
                 foreach (var item in Model.Posts)
                 {
                     <tr style="font-size: 14px">
-                        <td>
+                        <td style="width: 60%">
                             <div>
                                 <a style="font-size:18px" href="@Url.Action("Details", "Forum", new { id = item.Id })">@item.Title</a>
                                 <p>Started by <a href="/Profile/@item.User.UserName">@item.User.UserName</a></p>
@@ -56,11 +47,25 @@
                             <p>Views: @item.ViewCount</p>
                         </td>
                         <td>
-                            <p>Latest post by</p>
+                            @{
+                                var latestComment = item.Comments.OrderByDescending(c => c.Date).FirstOrDefault();
+                                var user = await _userManager.FindByIdAsync(latestComment.UserId);
+                                if (latestComment != null)
+                                {
+                                    <p><a class="go-to-post" data-toggle="tooltip" title="Go to post" href="/Forum/Details/@latestComment.PostId#post@(latestComment.Id)"><span class="fas fa-arrow-alt-circle-right"></span></a><a href="/Profile/@user.UserName">@user.UserName</a></p>
+                                    <p style="line-height: 0px">@latestComment.Date.ToString("MMMM") @latestComment.Date.Day @latestComment.Date.Year, @latestComment.Date.ToString("HH:mm:ss")</p>
+                                }
+
+                                else
+                                {
+                                    <p><a class="go-to-post" data-toggle="tooltip" title="Go to post" href="/Forum/Details/@item.Id"><span class="fas fa-arrow-alt-circle-right"></span></a><a href="/Profile/@item.User.UserName">@item.User.UserName</a></p>
+                                    <p style="line-height: 0px">@item.Date.ToString("MMMM") @item.Date.Day @item.Date.Year, @item.Date.ToString("HH:mm:ss")</p>
+                                }
+                            }
                         </td>
                     </tr>
                 }
-              }
-         </tbody>
+            }
+        </tbody>
     </table>
 </div>

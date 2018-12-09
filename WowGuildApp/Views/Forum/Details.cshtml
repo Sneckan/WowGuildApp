@@ -28,7 +28,7 @@
                     <p class="user-guild-rank">Guildrank: Officer</p>
                     <p class="user-class">120 Draenei Paladin</p>
                     <p class="user-ilvl">ilvl: 381</p>
-                    <p class="user-postcount">130 posts</p>
+                    <p class="user-postcount">@Model.Post.User.PostCount posts</p>
                 </div>
             </div>
 
@@ -63,7 +63,7 @@
                             <p class="user-guild-rank">Guildrank: Officer</p>
                             <p class="user-class">120 Draenei Paladin</p>
                             <p class="user-ilvl">ilvl: 381</p>
-                            <p class="user-postcount">@*@item.User.GetUserPostCount(item.UserId) posts*@</p>
+                            <p class="user-postcount">@item.User.PostCount posts</p>
                         </div>
                     </div>
 

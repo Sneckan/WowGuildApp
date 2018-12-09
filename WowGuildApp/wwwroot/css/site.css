@@ -41,6 +41,15 @@ a {
     transition: color 0.3s ease-in-out;
 }
 
+.forum-posts tr td {
+    border-top: 2px solid;
+    border-color: #171a1c !important;
+}
+
+.forum-posts thead tr th {
+    border: none !important;
+}
+
 .reply-wrapper {
     border-top: 2px solid #373a3e;
     text-align: right;
