@@ -4,6 +4,8 @@ body {
     padding-bottom: 20px;
     background-color: #212529;
     color: white;
+}
+
 .fc-title {
   color: white;
 }
@@ -32,6 +34,8 @@ hr {
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+}
+
 .fc-event {
   background-color: red;
   border-color: #ff3333;
