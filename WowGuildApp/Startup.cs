@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +14,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WowGuildApp.Data;
 using WowGuildApp.Models;
+using Owin.Security.Providers.BattleNet;
+using Owin;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace WowGuildApp
 {
@@ -38,7 +42,9 @@ namespace WowGuildApp
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=MyDb.db"));
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddFluentValidation(fvc =>
+                fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -71,6 +77,15 @@ namespace WowGuildApp
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+        }
+
+        public void ConfigureAuth(IAppBuilder app)
+        {
+            app.UseBattleNetAuthentication(new BattleNetAuthenticationOptions
+            {
+                ClientId = "7a1f720579ce42059ebad3fbe5212014",
+                ClientSecret = "MKhf4pqKonsVnR9pdXZPiMuu3ntGFbG3"
             });
         }
     }

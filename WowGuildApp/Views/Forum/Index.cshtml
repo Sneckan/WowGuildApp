@@ -1,0 +1,65 @@
+﻿@model WowGuildApp.Models.PostsViewModel
+
+@{
+    ViewData["Title"] = "Forum";
+}
+
+<div class="container">
+    <h1>Forum</h1>
+
+    <style>
+        .forum-categories tr td {
+            border-top: 2px solid;
+            border-color: #171a1c !important;
+        }
+    </style>
+
+    <table class="table forum-categories">
+        <thead style="border: none"> 
+            <tr>
+                <th style="border: none">Category</th>
+                <th style="border: none;">
+                    <div style="float: right;width: 200px;">
+                        Latest post
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var val in Enum.GetValues(typeof(Post.Categories)))
+                {
+                    var description = EnumExtensions.GetEnumDescription((Post.Categories)val);
+                    var categoryName = EnumExtensions.DisplayName((Post.Categories)val);
+                    <tr>
+                        <td>
+                            <img src="https://seeklogo.com/images/W/World_of_Warcraft_Horde_PvP-logo-E1C4DB80A9-seeklogo.com.png" style="width:50px;height:60px;display: inline-block;margin-right: 10px;"/>
+                            <div style="display: inline-block;vertical-align: top;">
+                                <a href="@Url.Action("Category", "Forum", new { category = categoryName })"><h3>@categoryName</h3></a>
+                                <p>@description</p>
+                            </div>
+                        </td>
+
+                        @{
+                            var post = Model.LatestPosts.Where(p => p.Category == categoryName).SingleOrDefault();
+                            if (post != null)
+                            {
+                                <td style="font-size: 14px;">
+                                    <div style="float: right;width:200px;">
+                                        <a href="@Url.Action("Details", "Forum", new { id = post.Id })">@post.Title</a>
+                                        <p style="margin: 0;padding: 0;">by <a href="/Profile/@post.User.UserName">@Html.DisplayFor(modelItem => post.User.UserName)</a></p>
+                                        <p style="margin: 0;padding: 0;">@post.Date.ToString("MMMM") @post.Date.Day @post.Date.Year, @post.Date.ToString("HH:mm:ss")</p>
+                                    </div>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

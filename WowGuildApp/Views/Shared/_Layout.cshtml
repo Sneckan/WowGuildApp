@@ -11,6 +11,8 @@
     <script src='~/lib/fullCalendar/moment.min.js'></script>
     <script src='~/lib/fullCalendar/fullcalendar.js'></script>
     <link rel='stylesheet' href='~/lib/fullCalendar/fullcalendar.css' />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -20,7 +22,6 @@
     </environment>
 </head>
 <body>
-    
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <a class="navbar-brand" href="#">Fixed navbar</a>
@@ -31,6 +32,7 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">Home</a></li>
                 <li class="nav-item"><a asp-area="" asp-controller="Home" asp-action="About" class="nav-link">About</a></li>
+                <li class="nav-item"><a asp-area="" asp-controller="Forum" asp-action="Index" class="nav-link">Forum</a></li>
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <li class="nav-item"><a asp-area="" asp-controller="Events" asp-action="Index" class="nav-link">Raidplanner</a></li>

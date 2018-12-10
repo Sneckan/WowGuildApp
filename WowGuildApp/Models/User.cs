@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WowGuildApp.Data;
 
 namespace WowGuildApp.Models
 {
     public class User : IdentityUser
     {
+        public int PostCount { get; set; }
         public User()
         {
             this.Signups = new List<Signup>();

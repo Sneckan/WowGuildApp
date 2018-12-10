@@ -10,6 +10,8 @@ namespace WowGuildApp.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -17,7 +19,7 @@ namespace WowGuildApp.Data
             //Kontroll om databasen finns. OBS Vid större ändringar deleta alltid databasen i Solution explorer!
             Database.EnsureCreated();
         }
-
+      
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
