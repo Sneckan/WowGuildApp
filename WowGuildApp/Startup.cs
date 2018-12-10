@@ -35,16 +35,41 @@ namespace WowGuildApp
             //    options.MinimumSameSitePolicy = SameSiteMode.None;
             //});
 
+            services.AddAuthentication()
+
+            .AddBattleNet(options =>
+            {
+                options.ClientId = "31ed4f96731745e697a3a6ffcc04068b";
+                options.ClientSecret = "rQjrhQhzkpzqsiEaZL3BjXhRosy95V8j";
+                options.AuthorizationEndpoint = "https://eu.battle.net/oauth/authorize";
+                options.TokenEndpoint = "https://eu.battle.net/oauth/token";
+                options.UserInformationEndpoint = "https://eu.battle.net/oauth/userinfo";
+                options.Scope.Add("wow.profile");
+                options.SaveTokens = true;
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite("Data Source=MyDb.db"));
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddMvc();
+            services.AddDefaultIdentity<User>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddRazorPagesOptions(options =>
+                {
+                    options.AllowAreas = true;
+                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                });
 
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
