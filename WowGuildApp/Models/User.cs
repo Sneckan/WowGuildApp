@@ -8,5 +8,11 @@ namespace WowGuildApp.Models
 {
     public class User : IdentityUser
     {
+        public User()
+        {
+            this.Signups = new List<Signup>();
+        }
+
+        public virtual List<Signup> Signups { get; set; }
     }
 }

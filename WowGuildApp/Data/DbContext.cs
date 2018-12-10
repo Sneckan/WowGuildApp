@@ -11,6 +11,7 @@ namespace WowGuildApp.Data
     public class ApplicationDbContext : IdentityDbContext<User>
     {
 
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             //Kontroll om databasen finns. OBS Vid större ändringar deleta alltid databasen i Solution explorer!
@@ -25,5 +26,9 @@ namespace WowGuildApp.Data
 
 
         }
+
+        public DbSet<WowGuildApp.Models.Event> Events { get; set; }
+        public DbSet<WowGuildApp.Models.Signup> Signups { get; set; }
+        public DbSet<WowGuildApp.Models.Lineup> Lineups { get; set; }
     }
 }

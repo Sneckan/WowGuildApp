@@ -1,0 +1,21 @@
+﻿@model Lineup
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="list-group-item">
+    <div>
+
+        @Model.User.UserName
+
+        <p data-toggle="modal" data-target="#lineup-@Model.Id">
+            Officer Note: @if (Model.OfficerNote != null)
+            {<text>@Model.OfficerNote</text>}
+
+        </p>
+
+        <p>
+            Note: @if (Model.Note != null)
+            {<text>@Model.Note</text>}
+        </p>
+    </div>
+</div>

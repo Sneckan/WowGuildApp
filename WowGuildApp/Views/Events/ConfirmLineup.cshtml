@@ -1,0 +1,23 @@
+﻿@model Event
+@{
+    ViewData["Title"] = "ConfirmLineup";
+}
+
+<h2>Confirm Lineup</h2>
+
+<p>Are you sure you want this lineup?</p>
+
+<div class="container">
+
+    <div class="row">
+        <a asp-action="Lineup" asp-route-id="@Model.Id" class="btn btn-danger mx-1">Back</a>
+
+        <form asp-action="ConfirmLineup" method="post">
+            <input asp-for="Id" type="hidden" value="@Model.Id" />
+            <input asp-for="ConfirmedLineup" type="hidden" value="@true" />
+            <input type="submit" class="btn btn-success" value="Accept" />
+        </form>
+    </div>
+</div>
+
+

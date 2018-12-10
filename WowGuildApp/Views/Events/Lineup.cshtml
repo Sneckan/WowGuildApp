@@ -1,0 +1,199 @@
+﻿@model WowGuildApp.ViewModels.LineupViewModel
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+
+@{
+    ViewData["Title"] = "Lineup";
+}
+
+
+<div>
+    <div id="lineup-list">
+        @await Html.PartialAsync("_LineupPartial",Model)
+    </div>
+    <br />
+    <div>
+        <a asp-action="ConfirmLineup" asp-route-id="@Model.Event.Id" class="btn btn-primary">Confirm Lineup</a>
+        <a asp-action="Details" asp-route-id="@Model.Event.Id">Back to raid</a>
+    </div>
+    
+    <div>
+        <div class="row">
+            <h2 class="mx-auto">Signed</h2>
+        </div>
+        <div class="row">
+
+            <div class="col">
+                <h3>Damage Dealer</h3>
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleDps == true))
+                    {
+                        <li class="list-group-item">
+                            @s.User.UserName
+                            @if (s.Note != null)
+                            {
+                                <p>
+                                    @s.Note
+                                </p>
+                            }
+
+                            <form asp-action="AddToLineup" class="form-inline lineup-form">
+                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
+                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+                                <input asp-for="Lineup.Role" type="hidden" value="1" />
+                                <select asp-for="Lineup.Group" class="form-control">
+                                    <option value="1">Group 1</option>
+                                    <option value="2">Group 2</option>
+                                    <option value="-1">Reserve</option>
+                                </select>
+                                <input type="submit" class="btn btn-primary" value="Add" />
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col">
+                <h3>Healer</h3>
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleHealer == true))
+                    {
+                        <li class="list-group-item">
+                            @s.User.UserName
+                            @if (s.Note != null)
+                            {
+                                <p>
+                                    @s.Note
+                                </p>
+                            }
+                            <form asp-action="AddToLineup" method="post" class="form-inline lineup-form">
+                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
+                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+                                <input asp-for="Lineup.Role" type="hidden" value="2" />
+                                <select asp-for="Lineup.Group" class="form-control">
+                                    <option value="1">Group 1</option>
+                                    <option value="2">Group 2</option>
+                                    <option value="-1">Reserve</option>
+                                </select>
+                                <input type="submit" class="btn btn-primary" value="Add" />
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col">
+                <h3>Tank</h3>
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleTank == true))
+                    {
+                        <li class="list-group-item">
+
+                            <div>
+                                @s.User.UserName
+                                @if (s.Note != null)
+                                {
+                                    <p>
+                                        @s.Note
+                                    </p>
+                                }
+
+                                <form asp-action="AddToLineup" class="form-inline lineup-form">
+                                    <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
+                                    <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+                                    <input asp-for="Lineup.Role" type="hidden" value="3" />
+                                    <select asp-for="Lineup.Group" class="form-control">
+                                        <option value="1">Group 1</option>
+                                        <option value="2">Group 2</option>
+                                        <option value="-1">Reserve</option>
+                                    </select>
+                                    <input type="submit" class="btn btn-primary" value="Add" />
+                                </form>
+                            </div>
+                        </li>
+
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div>
+
+        <div class=" row">
+            <h2 class="mx-auto">Unsigned</h2>
+        </div>
+        <div class="row">
+
+            <div class="col">
+                <ul class="list-group">
+                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == false))
+                    {
+                        <li class="list-group-item">
+                            @s.User.UserName
+                            @if (s.Note != null)
+                            {
+                                <p>
+                                    @s.Note
+                                </p>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section Scripts{ 
+
+<script>
+    $(function () {
+
+        
+        $('body').on('submit', 'form.lineup-form',function (e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var url = form.attr('action');
+            var method = form.attr('method');
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: form.serialize(),
+                success: function (result) {
+                    $('#lineup-list').html(result);
+                }
+            })
+
+        });
+
+        
+
+        $('body').on('submit', 'form.officer-note-form',function (e) {
+
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function (result) {
+
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    
+                    $('#lineup-list').html(result);
+                    
+                }
+            })
+
+        });
+    })
+</script>
+
+}

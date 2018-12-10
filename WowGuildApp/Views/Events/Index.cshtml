@@ -1,0 +1,48 @@
+﻿@model List<Event>
+@{
+        ViewData["Title"] = "Raid Planner";
+}
+
+
+
+<h1>@ViewData["Title"]</h1>
+
+
+@* Lyckades inte komma på ett eget sätt att skapa "kalendern"
+    kör med https://fullcalendar.io/ tillsvidare*@
+
+<div id="calendar">
+</div>
+
+<script>
+    $(function () {
+
+        // page is now ready, initialize the calendar...
+        $('#calendar').fullCalendar({
+            // put your options and callbacks here
+            defaultView: 'month',
+            dayClick: function (date, jsEvent, view) {
+
+                window.open('Events/Create/'+date.format(),'_self')
+            },
+            events: [
+                @foreach (Event i in Model)
+                {
+                    <text>
+                        {
+                            title: '@i.Title',
+                            start: '@i.Date.ToString("yyyy-MM-dd")',
+                            id: @i.Id
+                        },
+                    </text>
+                }
+            ],
+            eventClick: function (event) {
+                window.open('Events/Details/' + event.id,'_self')
+                return false;
+            }
+        })
+
+    });
+</script>
+

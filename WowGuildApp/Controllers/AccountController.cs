@@ -52,8 +52,8 @@ namespace WowGuildApp.Controllers
             {
                 return View();
             }
-
-            var result = await signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
+            User signedUser = await userManager.FindByEmailAsync(request.Email);
+            var result = await signInManager.PasswordSignInAsync(signedUser.UserName, request.Password, false, false);
 
             if (!result.Succeeded)
             {
@@ -65,7 +65,7 @@ namespace WowGuildApp.Controllers
                 return View();
             }
 
-            return RedirectToAction("Index", "Event");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Register()
@@ -98,7 +98,7 @@ namespace WowGuildApp.Controllers
             }
 
             //Sist men inte minst, vi vill inte returnera en särskild view bara för detta tillfälle, så vi vidarebefordrar användaren till AccountControll Index.
-            return RedirectToAction("Index");
+            return RedirectToAction("Login");
         }
     }
 }
