@@ -1,0 +1,176 @@
+﻿@page
+@model WowGuildApp.Areas.Identity.Pages.Account.Manage.CharactersModel
+@{
+    ViewData["Title"] = "Characters";
+    ViewData["ActivePage"] = ManageNavPages.Characters;
+
+}
+
+<h4>@ViewData["Title"]</h4>
+@Html.Partial("_StatusMessage", Model.StatusMessage)
+
+<div class="row">
+    <p>
+        Select your characters youre currently playing
+    </p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Race
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Level
+                </th>
+                <th>
+                    Realm
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Character c in Model.Characters.Characters.OrderByDescending(c => c.Level))
+            {
+                <tr>
+                    <td>
+                        @c.Name
+                    </td>
+                    <td>
+                        @switch (c.Race)
+                        {
+                            case 1:
+                                <text>Human</text>
+                                break;
+                            case 2:
+                                <text>Orc</text>
+                                break;
+                            case 3:
+                                <text>Dwarf</text>
+                                break;
+                            case 4:
+                                <text>Night Elf</text>
+                                break;
+                            case 5:
+                                <text>Undead</text>
+                                break;
+                            case 6:
+                                <text>Tauren</text>
+                                break;
+                            case 7:
+                                <text>Gnome</text>
+                                break;
+                            case 8:
+                                <text>Troll</text>
+                                break;
+                            case 9:
+                                <text>Goblin</text>
+                                break;
+                            case 10:
+                                <text>Blood Elf</text>
+                                break;
+                            case 11:
+                                <text>Draenei</text>
+                                break;
+                            case 22:
+                                <text>Worgen</text>
+                                break;
+                            case 24:
+                                <text>Pandaren</text>
+                                break;
+                            case 25:
+                                <text>Pandaren</text>
+                                break;
+                            case 26:
+                                <text>Pandaren</text>
+                                break;
+                            case 27:
+                                <text>Nightborne</text>
+                                break;
+                            case 28:
+                                <text>Highmountain Tauren</text>
+                                break;
+                            case 29:
+                                <text>Void Elf</text>
+                                break;
+                            case 30:
+                                <text>Lightforged Draenei</text>
+                                break;
+                            case 34:
+                                <text>Dark Iron Dwarf</text>
+                                break;
+                            case 36:
+                                <text>Mag'har Orc</text>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        @switch (c.Class)
+                        {
+                            case 1:
+                                <text>Warrior</text>
+                                break;
+                            case 2:
+                                <text>Paladin</text>
+                                break;
+                            case 3:
+                                <text>Hunter</text>
+                                break;
+                            case 4:
+                                <text>Rogue</text>
+                                break;
+                            case 5:
+                                <text>Priest</text>
+                                break;
+                            case 6:
+                                <text>Death Knight</text>
+                                break;
+                            case 7:
+                                <text>Shaman</text>
+                                break;
+                            case 8:
+                                <text>Mage</text>
+                                break;
+                            case 9:
+                                <text>Warlock</text>
+                                break;
+                            case 10:
+                                <text>Monk</text>
+                                break;
+                            case 11:
+                                <text>Druid</text>
+                                break;
+                            case 12:
+                                <text>Demon Hunter</text>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        @c.Level
+                    </td>
+                    <td>
+                        @c.Realm
+                    </td>
+                    <td>
+                        <form method="post">
+                            <input asp-for="Input.Name" type="hidden" value="@c.Name" />
+                            <input asp-for="Input.Realm"type="hidden" value="@c.Realm" />
+                            <input type="submit" value="add character" class="btn btn-primary"/>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
+
+

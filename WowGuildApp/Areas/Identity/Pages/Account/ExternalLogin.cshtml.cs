@@ -80,6 +80,8 @@ namespace WowGuildApp.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+                await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -124,6 +126,7 @@ namespace WowGuildApp.Areas.Identity.Pages.Account
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+
                         return LocalRedirect(returnUrl);
                     }
                 }

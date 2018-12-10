@@ -8,5 +8,7 @@ namespace WowGuildApp.Models
 {
     public class User : IdentityUser
     {
+       
+        public virtual List<Character> Characters { get; set; }
     }
 }
