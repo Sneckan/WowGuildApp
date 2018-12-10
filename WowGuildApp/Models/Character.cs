@@ -21,7 +21,7 @@ namespace WowGuildApp.Models
         public string Thumbnail { get; set; }
         public long LastModified { get; set; }
 
-        public virtual string UserId { get; set; }
-        public virtual User User { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
     }
 }

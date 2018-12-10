@@ -43,6 +43,8 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
 
         public CharacterList Characters { get; set; }
 
+        public List<Character> InUseCharacters { get; set; }
+
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -66,6 +68,8 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             var response = await client.SendAsync(request);
 
             Characters = JsonConvert.DeserializeObject<CharacterList>(await response.Content.ReadAsStringAsync());
+
+            InUseCharacters = user.Characters;
 
             return Page();
         }
@@ -113,6 +117,8 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             if(await db.Characters.FirstOrDefaultAsync(c => c.Name==Character.Name && c.Realm == Character.Realm) == null)
             {
                 await db.Characters.AddAsync(Character);
+                user.Characters.Add(Character);
+                db.Users.Update(user);
                 await db.SaveChangesAsync();
             }
 

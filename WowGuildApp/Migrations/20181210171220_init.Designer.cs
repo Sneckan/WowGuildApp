@@ -10,7 +10,7 @@ using WowGuildApp.Data;
 namespace WowGuildApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181210133248_init")]
+    [Migration("20181210171220_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
