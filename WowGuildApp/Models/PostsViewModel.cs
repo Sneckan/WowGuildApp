@@ -14,7 +14,6 @@ namespace WowGuildApp.Models
         public List<Post> Posts { get; set; }
         public List<Post> LatestPosts { get; set; }
         public string Category { get; set; }
-        public List<string> Categories { get; set; }
         public List<Comment> Comments { get; set; }
         public Comment Comment { get; set; }
         public int Page { get; set; }

@@ -24,49 +24,44 @@ namespace WowGuildApp
             _userManager = userManager;
         }
 
+        //Forum/Categories/News?page=2
         [Route("Forum/Categories/{category}")]
         public IActionResult Category(string category, int page = 1)
         {
+            //Paging for posts
             var pageSize = 5;
             var skip = pageSize * (page - 1);
             var totalOfPosts = db.Posts.Where(p => p.Category == category).Count();
             var canPage = skip < totalOfPosts;
 
-            List<Post> postsList = new List<Post>();
             PostsViewModel viewModel = new PostsViewModel();
+            //Send paging information and list of posts for that category to viewmodel
             viewModel.PageSize = pageSize;
             viewModel.Skip = skip;
             viewModel.MaxPage = (totalOfPosts / pageSize) + ((totalOfPosts % pageSize) > 0 ? 1 : 0);
             viewModel.Page = page;
-
-            if (canPage)
-            {
-                postsList = db.Posts.Include(p => p.User).Include(p => p.Comments).Where(p => p.Category == category).Skip(skip).Take(pageSize).ToList();
-            }
-            else
-            {
-                postsList = db.Posts.Include(p => p.User).Include(p => p.Comments).Where(p => p.Category == category).OrderByDescending(p => p.Date).Take(pageSize).ToList();
-            }
-
-            viewModel.Posts = postsList;
+            //Get posts in specific category and order by latest comment
+            viewModel.Posts = db.Posts.Where(p => p.Category == category).Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User)
+                .OrderByDescending(p => p.Comments
+                .OrderByDescending(c => c.Date).Select(c => c.Date).FirstOrDefault())
+                .Skip(skip).Take(pageSize).ToList();
             viewModel.Category = category;
-
 
             return View(viewModel);
         }
 
-        // GET: Forum
+        // GET: /Forum
         public IActionResult Index()
         {
             PostsViewModel viewModel = new PostsViewModel();
-            viewModel.Categories = new List<string>();
             viewModel.LatestPosts = new List<Post>();
 
+            //Loop through categories enum
             foreach (var val in Enum.GetValues(typeof(Post.Categories)))
             {
+                //Get the display name for every enum property using enum helper class
                 var categoryName = EnumExtensions.DisplayName((Post.Categories)val);
-                viewModel.Categories.Add(categoryName);
-
+                //Set latest post for every category
                 var latestPost = db.Posts.Include(p => p.User).Where(p => p.Category == categoryName).OrderByDescending(p => p.Date).FirstOrDefault();
                 if (latestPost != null)
                 {
@@ -77,7 +72,7 @@ namespace WowGuildApp
             return View(viewModel);
         }
 
-        // GET: Forum/Details/5
+        // GET: Forum/Details/5?page=2
         public async Task<IActionResult> Details(int? id, int page = 1)
         {
             if (id == null)
@@ -93,13 +88,15 @@ namespace WowGuildApp
                 return NotFound();
             }
 
+            //Set paging for comments
             var pageSize = 10;
             var skip = pageSize * (page - 1);
             var totalOfComments = db.Comments.Where(c => c.PostId == post.Id).Count();
-            var canPage = skip < totalOfComments;
+
             PostsViewModel viewModel = new PostsViewModel();
             viewModel.Post = post;
             viewModel.Category = post.Category;
+            //Send paging info to viewmodel
             viewModel.PageSize = pageSize;
             viewModel.Skip = skip;
             viewModel.MaxPage = (totalOfComments / pageSize) + ((totalOfComments % pageSize) > 0 ? 1 : 0);
@@ -107,6 +104,7 @@ namespace WowGuildApp
             List<Comment> comments = new List<Comment>();
 
             var user = await _userManager.GetUserAsync(HttpContext.User);
+            //Check if the user viewing the post is logged in. If the user is logged in the viewcount of the post increases by one
             if (user != null)
             {
                 viewModel.CurrentUser = user.Id;
@@ -115,22 +113,16 @@ namespace WowGuildApp
                 await db.SaveChangesAsync();
             }
 
+            //If page equals or is lower than 1, set the page in viewmodel to 1
             if (page <= 1)
             {
                 viewModel.Page = 1;
                 comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Take(pageSize).ToList();
             }
-
+            //Check how many comments to skip and take if page is above 1
             else
             {
-                if (canPage)
-                {
-                    comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
-                }
-                else
-                {
-                    comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).OrderByDescending(c => c.Date).Take(pageSize).OrderBy(c => c.Date).ToList();
-                }
+                comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
             }
 
             viewModel.Comments = comments;
@@ -160,7 +152,7 @@ namespace WowGuildApp
                 comment.UserId = user.Id; 
                 db.Add(comment);
                 await db.SaveChangesAsync();
-
+                //Redirect to the comment anchor
                 return Redirect(viewModel.ReturnUrl + "#post" + comment.Id);
             }
 
@@ -175,8 +167,6 @@ namespace WowGuildApp
         }
 
         // POST: Forum/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -208,7 +198,6 @@ namespace WowGuildApp
                 return NotFound();
             }
 
-
             var post = await db.Posts.FindAsync(id);
             if (post == null)
             {
@@ -226,8 +215,6 @@ namespace WowGuildApp
         }
 
         // POST: Forum/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -290,8 +277,6 @@ namespace WowGuildApp
         }
 
         // POST: Forum/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -364,7 +349,7 @@ namespace WowGuildApp
             db.Posts.Remove(post);
             await db.SaveChangesAsync();
 
-            //Get user and update its total postcount
+            //Get user and update its total postcount after removing the post
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var postCount = db.Posts.Where(p => p.UserId == user.Id).Count();
             var commentCount = db.Comments.Where(p => p.UserId == user.Id).Count();
@@ -411,7 +396,7 @@ namespace WowGuildApp
             db.Comments.Remove(comment);
             await db.SaveChangesAsync();
 
-            //Get user and update its total postcount
+            //Get user and update its total postcount after removing the comment
             var user = await _userManager.GetUserAsync(HttpContext.User);
             user.PostCount--;
             await _userManager.UpdateAsync(user);

@@ -49,10 +49,11 @@
                         <td>
                             @{
                                 var latestComment = item.Comments.OrderByDescending(c => c.Date).FirstOrDefault();
-                                var user = await _userManager.FindByIdAsync(latestComment.UserId);
+                                var totalOfComments = item.Comments.Count();
+                                var maxPage = (totalOfComments / 10) + ((totalOfComments % 10) > 0 ? 1 : 0);
                                 if (latestComment != null)
                                 {
-                                    <p><a class="go-to-post" data-toggle="tooltip" title="Go to post" href="/Forum/Details/@latestComment.PostId#post@(latestComment.Id)"><span class="fas fa-arrow-alt-circle-right"></span></a><a href="/Profile/@user.UserName">@user.UserName</a></p>
+                                    <p><a class="go-to-post" data-toggle="tooltip" title="Go to post" href="/Forum/Details/@latestComment.PostId?page=@maxPage#post@(latestComment.Id)"><span class="fas fa-arrow-alt-circle-right"></span></a><a href="/Profile/@latestComment.User.UserName">@latestComment.User.UserName</a></p>
                                     <p style="line-height: 0px">@latestComment.Date.ToString("MMMM") @latestComment.Date.Day @latestComment.Date.Year, @latestComment.Date.ToString("HH:mm:ss")</p>
                                 }
 
