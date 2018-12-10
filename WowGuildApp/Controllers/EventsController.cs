@@ -27,11 +27,13 @@ namespace WowGuildApp
 
         }
 
+
+        //Get: Events/Index
         [Authorize]
         public IActionResult Index()
         {
             List<Event> model;
-
+            
             model = _context.Events.ToList();
 
             return View(model);
@@ -58,11 +60,13 @@ namespace WowGuildApp
 
             foreach (Signup s in signups)
             {
+                //Gets the user objects for each signup
                 s.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == s.UserId);
             }
 
             var @lineups = _context.Lineups.Where(l => l.EventId == @event.Id).ToList();
 
+            
             EventDetailViewModel model = new EventDetailViewModel
             {
                 Event = @event,
@@ -76,12 +80,7 @@ namespace WowGuildApp
             return View(model);
         }
 
-        // GET: Events/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
+        // GET: Events/Create/2018-12-13
         [HttpGet,Route("Events/Create/{date}")]
         public IActionResult Create(string date)
         {
@@ -105,7 +104,7 @@ namespace WowGuildApp
                 @event.host = user;
                 
 
-
+                //fixes the date values of the time properties
                 TimeSpan ts = @event.InviteTime.TimeOfDay;
                 @event.InviteTime = @event.Date.Date + ts;
 
@@ -154,6 +153,8 @@ namespace WowGuildApp
             {
                 try
                 {
+                    //fixes the date values of the time properties
+
                     TimeSpan ts = @event.InviteTime.TimeOfDay;
                     @event.InviteTime = @event.Date.Date + ts;
 
@@ -218,12 +219,14 @@ namespace WowGuildApp
             return _context.Events.Any(e => e.Id == id);
         }
 
-   
+        //POST: Events/Signup/
         [HttpPost]
         public IActionResult Signup(Signup signup)
         {
+            //stops signups after last signup time
             if(_context.Events.FirstOrDefault(e=>e.Id==signup.EventId).LastSignup> DateTime.Now)
             {
+                //if signup doesnt exist, create new. else update
                 if(_context.Signups.FirstOrDefault(s => s.EventId==signup.EventId && s.UserId == signup.UserId)==null)
                 {
                     signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
@@ -254,7 +257,7 @@ namespace WowGuildApp
         [HttpPost]
         public IActionResult UnSign(Signup signup)
         {
-
+            //if signup doesnt exist, create as unsigned. else update
             if (_context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId) == null)
             {
                 signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
@@ -284,6 +287,7 @@ namespace WowGuildApp
             return RedirectToAction("Details/" + signup.EventId);
         }
 
+        //GET: Events/Lineup/3
         public async Task<IActionResult> Lineup(int? id)
         {
 
@@ -311,10 +315,11 @@ namespace WowGuildApp
 
         }
 
+        //POST: Events/Lineup/3
         [HttpPost]
         public IActionResult AddToLineup(Lineup lineup)
         {
-
+            //if lineup doesnt exist, create new lineup. else update
             if(_context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId) == null)
             {
                 lineup.Note = _context.Signups.FirstOrDefault(s => s.EventId == lineup.EventId && s.UserId == lineup.UserId).Note;
@@ -332,6 +337,7 @@ namespace WowGuildApp
             
             _context.SaveChanges();
 
+            //Reloads model for partial view
             LineupViewModel model = new LineupViewModel
             {
                 Event = _context.Events.FirstOrDefault(e => e.Id == lineup.EventId),
@@ -346,6 +352,8 @@ namespace WowGuildApp
             return PartialView("_LineupPartial",model);
         }
 
+
+        //DELETE: Events/Lineup/3
         [HttpDelete]
         public IActionResult RemoveFromLineup(Lineup lineup)
         {
@@ -370,6 +378,7 @@ namespace WowGuildApp
             return PartialView("_LineupPartial", model);
         }
 
+        //POST: Events/Lineup/3
         [HttpPost]
         public IActionResult OfficerNote(Lineup lineup)
         {
@@ -381,6 +390,7 @@ namespace WowGuildApp
                 _context.SaveChanges();
             }
 
+            //Reloads model for partial view
             LineupViewModel model = new LineupViewModel
             {
                 Event = _context.Events.FirstOrDefault(e => e.Id == lineup.EventId),
@@ -395,9 +405,12 @@ namespace WowGuildApp
             return PartialView("_LineupPartial", model);
         }
 
+
+        //POST Events/Lineup/3
         [HttpPost]
         public IActionResult SignupNote(Signup signup)
         {
+            //stops signup note if after invite time
             if(_context.Events.FirstOrDefault(e => e.Id == signup.EventId).InviteTime>DateTime.Now)
             {
                 var dbSignup = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId);
@@ -415,6 +428,7 @@ namespace WowGuildApp
 
             }
 
+            //Reloads model for partial view
 
             var @event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
             var @signups = _context.Signups.Where(s => s.EventId == @event.Id).ToList();
@@ -444,6 +458,7 @@ namespace WowGuildApp
         }
 
         
+        //GET: Events/ConfimLineup/3
         public IActionResult ConfirmLineup(int id)
         {
             Event model = _context.Events.FirstOrDefault(e => e.Id == id);
@@ -451,6 +466,7 @@ namespace WowGuildApp
             return View(model);
         }
 
+        //POST: Events/ConfirmLineup/3
         [HttpPost]
         public IActionResult ConfirmLineup(Event Event)
         {
