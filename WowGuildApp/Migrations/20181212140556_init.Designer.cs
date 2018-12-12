@@ -10,7 +10,7 @@ using WowGuildApp.Data;
 namespace WowGuildApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181210171220_init")]
+    [Migration("20181212140556_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -152,6 +152,8 @@ namespace WowGuildApp.Migrations
                     b.Property<long>("LastModified");
 
                     b.Property<int>("Level");
+
+                    b.Property<bool>("Main");
 
                     b.Property<string>("Name");
 

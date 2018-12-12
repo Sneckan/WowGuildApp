@@ -151,6 +151,8 @@ namespace WowGuildApp.Migrations
 
                     b.Property<int>("Level");
 
+                    b.Property<bool>("Main");
+
                     b.Property<string>("Name");
 
                     b.Property<int>("Race");

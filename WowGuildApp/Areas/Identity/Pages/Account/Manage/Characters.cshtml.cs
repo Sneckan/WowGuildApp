@@ -39,8 +39,6 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public string Username { get; set; }
-
         public CharacterList Characters { get; set; }
 
         public List<Character> InUseCharacters { get; set; }
@@ -52,10 +50,6 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
-            var userName = await _userManager.GetUserNameAsync(user);
-
-            Username = userName;
 
             var _access_token = await _userManager.GetAuthenticationTokenAsync(user,"BattleNet","access_token");
             string requestUri = "https://eu.api.blizzard.com/wow/user/characters?access_token=" + _access_token;
@@ -69,7 +63,7 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
 
             Characters = JsonConvert.DeserializeObject<CharacterList>(await response.Content.ReadAsStringAsync());
 
-            InUseCharacters = user.Characters;
+            InUseCharacters = db.Characters.Where(c => c.UserId == user.Id).ToList();
 
             return Page();
         }
@@ -83,6 +77,7 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
         {
             public string Name { get; set; }
             public string Realm { get; set; }
+            public bool Main { get; set; }
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -102,23 +97,36 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get, requestUri);
-
             var client = _clientFactory.CreateClient();
-
             var response = await client.SendAsync(request);
-
-            var temp = await response.Content.ReadAsStringAsync();
 
             Character Character = JsonConvert.DeserializeObject<Character>(await response.Content.ReadAsStringAsync());
 
             Character.User = user;
             Character.UserId = user.Id;
-            
-            if(await db.Characters.FirstOrDefaultAsync(c => c.Name==Character.Name && c.Realm == Character.Realm) == null)
+            Character.Main = Input.Main;
+
+            Character character = await db.Characters.FirstOrDefaultAsync(c => c.Name == Character.Name && c.Realm == Character.Realm);
+
+            if (character == null)
             {
                 await db.Characters.AddAsync(Character);
                 user.Characters.Add(Character);
                 db.Users.Update(user);
+                await db.SaveChangesAsync();
+            }
+            else if(!character.Main)
+            {
+
+                foreach(Character c in db.Characters.Where(i => i.UserId == user.Id).ToList())
+                {
+                    c.Main = !Input.Main;
+                    db.Characters.Update(c);
+                }
+
+                character.Main = Input.Main;
+
+                db.Characters.Update(character);
                 await db.SaveChangesAsync();
             }
 

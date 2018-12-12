@@ -169,6 +169,7 @@ namespace WowGuildApp.Migrations
                     Achievmentpoints = table.Column<long>(nullable: false),
                     Thumbnail = table.Column<string>(nullable: true),
                     LastModified = table.Column<long>(nullable: false),
+                    Main = table.Column<bool>(nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
