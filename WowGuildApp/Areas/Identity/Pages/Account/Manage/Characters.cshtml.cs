@@ -92,29 +92,31 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var _access_token = await _userManager.GetAuthenticationTokenAsync(user, "BattleNet", "access_token");
-            string requestUri = "https://eu.api.blizzard.com/wow/character/"+Input.Realm+"/"+Input.Name+"?access_token="+ _access_token;    
+            Character character = await db.Characters.FirstOrDefaultAsync(c => c.Name == Input.Name && c.Realm == Input.Realm);
 
-            var request = new HttpRequestMessage(
-                HttpMethod.Get, requestUri);
-            var client = _clientFactory.CreateClient();
-            var response = await client.SendAsync(request);
-
-            Character Character = JsonConvert.DeserializeObject<Character>(await response.Content.ReadAsStringAsync());
-
-            Character.User = user;
-            Character.UserId = user.Id;
-            Character.Main = Input.Main;
-
-            Character character = await db.Characters.FirstOrDefaultAsync(c => c.Name == Character.Name && c.Realm == Character.Realm);
-
+            //if character doesn exist, add to database
             if (character == null)
             {
+                var _access_token = await _userManager.GetAuthenticationTokenAsync(user, "BattleNet", "access_token");
+                string requestUri = "https://eu.api.blizzard.com/wow/character/" + Input.Realm + "/" + Input.Name + "?access_token=" + _access_token;
+
+                var request = new HttpRequestMessage(
+                    HttpMethod.Get, requestUri);
+                var client = _clientFactory.CreateClient();
+                var response = await client.SendAsync(request);
+
+                Character Character = JsonConvert.DeserializeObject<Character>(await response.Content.ReadAsStringAsync());
+
+                Character.User = user;
+                Character.UserId = user.Id;
+                Character.Main = Input.Main;
+
                 await db.Characters.AddAsync(Character);
                 user.Characters.Add(Character);
                 db.Users.Update(user);
                 await db.SaveChangesAsync();
             }
+            //if character already exist, make it the users main if not already the main
             else if(!character.Main)
             {
 
