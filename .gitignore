@@ -7,7 +7,6 @@
 *.userosscache
 *.sln.docstates
 *.db
-WowGuildApp/Migrations
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
