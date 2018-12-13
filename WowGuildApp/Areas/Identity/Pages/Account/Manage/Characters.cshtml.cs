@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WowGuildApp.Models;
 using WowGuildApp.Data;
+using Newtonsoft.Json.Linq;
 
 namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
 {
@@ -86,6 +87,7 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             {
                 return Page();
             }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -98,15 +100,26 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             if (character == null)
             {
                 var _access_token = await _userManager.GetAuthenticationTokenAsync(user, "BattleNet", "access_token");
-                string requestUri = "https://eu.api.blizzard.com/wow/character/" + Input.Realm + "/" + Input.Name + "?access_token=" + _access_token;
+                string requestUri = "https://eu.api.blizzard.com/wow/character/" + Input.Realm + "/" + Input.Name + "?fields=items&locale=en_gb&access_token=" + _access_token;
 
                 var request = new HttpRequestMessage(
                     HttpMethod.Get, requestUri);
                 var client = _clientFactory.CreateClient();
                 var response = await client.SendAsync(request);
 
-                Character Character = JsonConvert.DeserializeObject<Character>(await response.Content.ReadAsStringAsync());
+                if (!response.IsSuccessStatusCode)
+                {
+                    StatusMessage = "Error: Could not update profile";
+                    return RedirectToPage();
+                }
 
+                var json = await response.Content.ReadAsStringAsync();
+                var root = JObject.Parse(json);
+                var averageItemLevel = root["items"]["averageItemLevelEquipped"];
+
+                Character Character = JsonConvert.DeserializeObject<Character>(json);
+
+                Character.AverageItemLevelEquipped = Convert.ToInt32(averageItemLevel);
                 Character.User = user;
                 Character.UserId = user.Id;
                 Character.Main = Input.Main;
@@ -116,6 +129,7 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
                 db.Users.Update(user);
                 await db.SaveChangesAsync();
             }
+
             //if character already exist, make it the users main if not already the main
             else if(!character.Main)
             {
@@ -136,7 +150,6 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }
-
-        
+       
     }
 }

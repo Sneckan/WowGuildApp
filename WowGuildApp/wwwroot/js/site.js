@@ -18,6 +18,10 @@ $('.reply-with-quote').click(function () {
     tinymce.activeEditor.focus();
 });
 
+$(".alert-dismissible").fadeTo(2000, 500).slideUp(500, function () {
+    $(".alert-dismissible").alert('close');
+});
+
 $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
 });

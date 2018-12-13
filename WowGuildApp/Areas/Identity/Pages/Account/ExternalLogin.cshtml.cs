@@ -125,6 +125,8 @@ namespace WowGuildApp.Areas.Identity.Pages.Account
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
                         return LocalRedirect(returnUrl);

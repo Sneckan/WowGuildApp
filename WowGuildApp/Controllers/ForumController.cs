@@ -81,7 +81,7 @@ namespace WowGuildApp
             }
 
             var post = await db.Posts
-                .Include(p => p.User).Include(p => p.Comments).FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.User).ThenInclude(u => u.Characters).Include(p => p.Comments).FirstOrDefaultAsync(m => m.Id == id);
 
             if (post == null)
             {
