@@ -139,7 +139,7 @@ namespace WowGuildApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("Achievmentpoints");
+                    b.Property<long>("AchievementPoints");
 
                     b.Property<string>("Battlegroup");
 

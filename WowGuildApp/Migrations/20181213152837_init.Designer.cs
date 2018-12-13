@@ -10,7 +10,7 @@ using WowGuildApp.Data;
 namespace WowGuildApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181213143456_init")]
+    [Migration("20181213152837_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,7 +141,7 @@ namespace WowGuildApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("Achievmentpoints");
+                    b.Property<long>("AchievementPoints");
 
                     b.Property<string>("Battlegroup");
 

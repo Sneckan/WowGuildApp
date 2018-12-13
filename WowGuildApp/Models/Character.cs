@@ -17,7 +17,7 @@ namespace WowGuildApp.Models
         public int Race { get; set; }
         public int Gender { get; set; }
         public int Level { get; set; }
-        public long Achievmentpoints { get; set; }
+        public long AchievementPoints { get; set; }
         public string Thumbnail { get; set; }
         public long LastModified { get; set; }
 
