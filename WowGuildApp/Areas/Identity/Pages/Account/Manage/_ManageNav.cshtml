@@ -2,7 +2,7 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills nav-stacked">
+@*<ul class="nav nav-pills nav-stacked">
     <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-page="./Index">Profile</a></li>
     <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)"><a id="change-password" asp-page="./ChangePassword">Password</a></li>
     @if (hasExternalLogins)
@@ -14,4 +14,17 @@
     <li class="@ManageNavPages.CharactersNavClass(ViewContext)"><a asp-page="./Characters">Characters</a></li>
 
 
-</ul>
+</ul>*@
+
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a asp-page="./Index" class="@ManageNavPages.IndexNavClass(ViewContext) nav-link">Profile</a>
+        <a id="change-password" asp-page="./ChangePassword" class="@ManageNavPages.ChangePasswordNavClass(ViewContext) nav-link">Password</a>
+        @if (hasExternalLogins)
+        {
+            <a id="external-login" asp-page="./ExternalLogins" class="@ManageNavPages.ExternalLoginsNavClass(ViewContext) nav-link">External logins</a>
+        }
+        <a asp-page="./TwoFactorAuthentication" class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext) nav-link">Two-factor authentication</a>
+        <a asp-page="./PersonalData" class="@ManageNavPages.PersonalDataNavClass(ViewContext) nav-link">Personal data</a>
+        <a asp-page="./Characters" class="@ManageNavPages.CharactersNavClass(ViewContext) nav-link">Characters</a>
+    </div>
+
