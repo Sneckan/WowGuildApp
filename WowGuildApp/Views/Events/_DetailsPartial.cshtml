@@ -1,0 +1,187 @@
+﻿@model WowGuildApp.ViewModels.EventDetailViewModel
+
+<div>
+    @if (Model.Event.ConfirmedLineup == true)
+    {
+        <div class="row">
+            <h2 class="mx-auto">Lineup</h2>
+        </div>
+        @if (Model.Lineups.Where(l => l.Group == 1).ToList().Count > 0)
+        {
+            <div>
+                <div class="row">
+                    <h2 class="mx-auto">Group 1</h2>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3>Damage Dealer</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == 1))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+                            }
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Healer</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == 1))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+
+                            }
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Tank</h3>
+                        <div class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == 1))
+                            {
+
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.Lineups.Where(l => l.Group == 2).ToList().Count > 0)
+        {
+            <div>
+                <div class="row">
+                    <h2 class="mx-auto">Group 2</h2>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3>Damage Dealer</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == 2))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+
+                            }
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Healer</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == 2))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+
+                            }
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Tank</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == 2))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.Lineups.Where(l => l.Group == -1).ToList().Count > 0)
+        {
+            <div>
+                <div class="row">
+                    <h2 class="mx-auto">Reserve</h2>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3>Damage Dealer</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 1 && l.Group == -1))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+
+                            }
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Healer</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 2 && l.Group == -1))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+
+                            }
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Tank</h3>
+                        <ul class="list-group">
+                            @foreach (Lineup l in Model.Lineups.Where(l => l.Role == 3 && l.Group == -1))
+                            {
+                                @await Html.PartialAsync("_DetailsLineupPartial", l)
+
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+</div>
+
+<div>
+
+    <div class="row">
+        <h2 class="mx-auto">Signed</h2>
+    </div>
+    <div class="row">
+
+        <div class="col">
+            <h3>Damage Dealer</h3>
+            <div class="list-group">
+                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleDps == true))
+                {
+                    @await Html.PartialAsync("_SignupNotePartial", s)
+                }
+            </div>
+        </div>
+        <div class="col">
+            <h3>Healer</h3>
+            <div class="list-group">
+                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleHealer == true))
+                {
+                    @await Html.PartialAsync("_SignupNotePartial", s)
+
+                }
+            </div>
+        </div>
+        <div class="col">
+            <h3>Tank</h3>
+            <div class="list-group">
+                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleTank == true))
+                {
+                    @await Html.PartialAsync("_SignupNotePartial", s)
+                }
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class=" row">
+        <h2 class="mx-auto">Unsigned</h2>
+    </div>
+    <div class="row">
+
+        <div class="col">
+            <ul class="list-group">
+                @foreach (Signup s in Model.Signups.Where(s => s.Sign == false))
+                {
+                    @await Html.PartialAsync("_SignupNotePartial", s)
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+

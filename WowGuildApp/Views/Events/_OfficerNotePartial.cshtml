@@ -1,0 +1,49 @@
+﻿
+@model Lineup
+
+<div class="list-group-item">
+    <div>
+
+        @Model.User.UserName
+
+        <p data-toggle="modal" data-target="#lineup-@Model.Id">
+            Officer Note: @if (Model.OfficerNote != null)
+            {<text>@Model.OfficerNote</text>}
+
+        </p>
+
+        <p>
+            Note: @if (Model.Note != null)
+            {<text>@Model.Note</text>}
+        </p>
+
+        <form asp-action="RemoveFromLineup" method="delete" class="form-inline lineup-form">
+            <input asp-for="@Model.EventId" type="hidden" value="@Model.EventId" />
+            <input asp-for="@Model.UserId" type="hidden" value="@Model.UserId" />
+            <input type="submit" class="btn btn-danger" value="Remove" />
+        </form>
+    </div>
+</div>
+<div class="modal fade officer-note-modal" id="lineup-@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@Model.User.UserName Note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="OfficerNote" class="officer-note-form" id="officer-note-form-@Model.Id">
+                    <textarea asp-for="OfficerNote" class="form-control"></textarea>
+                    <input asp-for="EventId" type="hidden" value="@Model.EventId" />
+                    <input asp-for="UserId" type="hidden" value="@Model.UserId" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" form="officer-note-form-@Model.Id" class="btn btn-primary" value="Add Note" />
+            </div>
+        </div>
+    </div>
+</div>

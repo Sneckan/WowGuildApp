@@ -1,0 +1,180 @@
+﻿@model WowGuildApp.ViewModels.EventDetailViewModel
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.Title)
+        </dt>
+        <dd>
+            @Model.Event.Title
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.Date)
+        </dt>
+        <dd>
+            @Model.Event.Date.ToString("dd/MM/yyyy")
+        <dt>
+            Invite Time
+        </dt>
+        <dd>
+            @Model.Event.InviteTime.ToString("HH:mm")
+        </dd>
+        <dt>
+            Start Time
+        </dt>
+        <dd>
+            @Model.Event.StartTime.ToString("HH:mm")
+        </dd>
+        <dt>
+            Last Signup
+        </dt>
+        <dd>
+            @Model.Event.LastSignup.ToString("HH:mm")
+        </dd>
+        <dt>
+            Raidleader
+        </dt>
+        <dd>
+            @Model.Host.UserName
+        </dd>
+        <dt>
+            Signs
+        </dt>
+        <dd>
+            @if(Model.ConfirmedLineup == true)
+            {
+                <text>
+                Confirmed: @Model.Lineups.Count()/@Model.Signups.Count()<br />
+                </text>
+            }
+            Available: @Model.Signups.Where(s => s.Sign == true).Count()/@Model.Signups.Count()<br />
+            Not Available: @Model.Signups.Where(s => s.Sign == false).Count()/@Model.Signups.Count()
+        </dd>
+
+        @if (Model.Event.Description != null)
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Event.Description)
+            </dt>
+            <dd>
+                @Model.Event.Description
+            </dd>
+        }
+    </dl>
+</div>
+<div class="row">
+    <div class="col">
+
+        @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Event.hostId)
+        {
+            <a asp-action="Lineup" asp-route-id="@Model.Event.Id" class="btn btn-primary @if(DateTime.Now < Model.Event.LastSignup) {<text>disabled</text>}">Lineup</a>
+            <a asp-action="Edit" asp-route-id="@Model.Event.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Event.Id" class="btn btn-danger">Delete</a>
+        }
+        <a asp-action="Index">Back to List</a>
+
+
+    </div>
+    <div class="col">
+        <form asp-action="UnSign" method="post" class="float-right">
+            <input type="hidden" asp-for="Signup.UserId" value="@UserManager.GetUserId(User)" />
+            <input type="hidden" asp-for="Signup.EventId" value="@Model.Event.Id" />
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signUpForm" @if (DateTime.Now > Model.Event.LastSignup) { <text> disabled</text>}>Signup</button>
+            <button type="submit" class="btn btn-danger" value="Unsign">Unsign</button>
+        </form>
+        <div class="modal fade" id="signUpForm" tabindex="-1" role="dialog" aria-labelledby="Sign Up" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="signUpFormTitle">Chose Role</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form asp-action="Signup" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" asp-for="Signup.UserId" value="@UserManager.GetUserId(User)" />
+                            <input type="hidden" asp-for="Signup.EventId" value="@Model.Event.Id" />
+
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" data-val="true" data-val-required="The RoleDps field is required." id="Signup_RoleDps" name="Signup.RoleDps" type="checkbox" value="true">
+                                    Damage
+                                </label>
+                            </div>
+
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" data-val="true" data-val-required="The RoleHealer field is required." id="Signup_RoleHealer" name="Signup.RoleHealer" type="checkbox" value="true">
+                                    Healer
+                                </label>
+                            </div>
+
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" data-val="true" data-val-required="The RoleTank field is required." id="Signup_RoleTank" name="Signup.RoleTank" type="checkbox" value="true">
+                                    Tank
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Signup" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div id="details-list">
+    @await Html.PartialAsync("_DetailsPartial",Model)
+</div>
+
+
+@section Scripts{
+
+
+    <script>
+        $(function () {
+
+
+
+            $('body').on('submit', 'form.signup-note-form', function (e) {
+
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+
+                $.ajax({
+                url: url,
+                    type: "POST",
+                    data: form.serialize(),
+                    success: function (result) {
+
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+
+                        $('#details-list').html(result);
+
+                    }
+                })
+
+            });
+
+            });
+    </script>
+}
