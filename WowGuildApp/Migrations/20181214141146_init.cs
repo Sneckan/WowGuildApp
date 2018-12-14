@@ -273,7 +273,12 @@ namespace WowGuildApp.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     EventId = table.Column<int>(nullable: false),
                     UserId = table.Column<string>(nullable: true),
+                    CharacterId = table.Column<int>(nullable: false),
                     Sign = table.Column<bool>(nullable: false),
+                    SpecializationOne = table.Column<int>(nullable: false),
+                    SpecializationTwo = table.Column<int>(nullable: false),
+                    SpecializationThree = table.Column<int>(nullable: false),
+                    SpecializationFour = table.Column<int>(nullable: false),
                     RoleDps = table.Column<bool>(nullable: false),
                     RoleHealer = table.Column<bool>(nullable: false),
                     RoleTank = table.Column<bool>(nullable: false),
@@ -282,6 +287,12 @@ namespace WowGuildApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Signups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Signups_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Signups_Events_EventId",
                         column: x => x.EventId,
@@ -400,6 +411,11 @@ namespace WowGuildApp.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Signups_CharacterId",
+                table: "Signups",
+                column: "CharacterId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Signups_EventId",
                 table: "Signups",
                 column: "EventId");
@@ -428,9 +444,6 @@ namespace WowGuildApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Characters");
-
-            migrationBuilder.DropTable(
                 name: "Comments");
 
             migrationBuilder.DropTable(
@@ -444,6 +457,9 @@ namespace WowGuildApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Characters");
 
             migrationBuilder.DropTable(
                 name: "Events");

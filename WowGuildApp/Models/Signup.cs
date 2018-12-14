@@ -15,7 +15,15 @@ namespace WowGuildApp.Models
         public string UserId { get; set; }
         public virtual User User { get; set; }
 
+        public int CharacterId { get; set; }
+        public Character Character{ get; set; }
+
         public bool Sign { get; set; }
+
+        public int SpecializationOne { get; set; }
+        public int SpecializationTwo { get; set; }
+        public int SpecializationThree { get; set; }
+        public int SpecializationFour { get; set; }
 
         public bool RoleDps { get; set; }
         public bool RoleHealer { get; set; }

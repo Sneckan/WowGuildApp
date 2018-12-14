@@ -58,14 +58,18 @@ namespace WowGuildApp
 
             var @signups = _context.Signups.Where(s => s.EventId == @event.Id).ToList();
 
-            foreach (Signup s in signups)
+            foreach (Signup s in @signups)
             {
                 //Gets the user objects for each signup
                 s.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == s.UserId);
+                s.Character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == s.CharacterId);
             }
 
             var @lineups = _context.Lineups.Where(l => l.EventId == @event.Id).ToList();
 
+            var currentUser = await GetCurrentUserAsync();
+
+            var @characters = _context.Characters.Where(c => c.UserId == currentUser.Id).ToList();
             
             EventDetailViewModel model = new EventDetailViewModel
             {
@@ -74,6 +78,8 @@ namespace WowGuildApp
                 Signups = @signups,
                 Lineups = lineups,
                 ConfirmedLineup = @event.ConfirmedLineup,
+                Characters = characters,
+                
             };
 
 
@@ -226,11 +232,14 @@ namespace WowGuildApp
             //stops signups after last signup time
             if(_context.Events.FirstOrDefault(e=>e.Id==signup.EventId).LastSignup> DateTime.Now)
             {
+
+                var signedUser = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId && s.CharacterId == signup.CharacterId);
                 //if signup doesnt exist, create new. else update
-                if(_context.Signups.FirstOrDefault(s => s.EventId==signup.EventId && s.UserId == signup.UserId)==null)
+                if (signedUser==null)
                 {
                     signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
                     signup.Event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
+                    signup.Character = _context.Characters.FirstOrDefault(c => c.Id == signup.CharacterId);
                     signup.Sign = true;
 
                     _context.Signups.Add(signup);
@@ -239,7 +248,6 @@ namespace WowGuildApp
 
                 else
                 {
-                    var signedUser = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId);
                     signedUser.Sign = true;
                     signedUser.RoleDps = signup.RoleDps;
                     signedUser.RoleHealer = signup.RoleHealer;
@@ -257,11 +265,14 @@ namespace WowGuildApp
         [HttpPost]
         public IActionResult UnSign(Signup signup)
         {
+
+            var signups = _context.Signups.Where(s => s.EventId == signup.EventId && s.UserId == signup.UserId).ToList();
             //if signup doesnt exist, create as unsigned. else update
-            if (_context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId) == null)
+            if (signups.Count() <= 0)
             {
                 signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
                 signup.Event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
+                signup.Character = _context.Characters.FirstOrDefault(c => c.UserId == signup.UserId && c.Main == true);
                 signup.Sign = false;
 
                 _context.Signups.Add(signup);
@@ -270,16 +281,18 @@ namespace WowGuildApp
 
             else
             {
-                var signedUser = _context.Signups.FirstOrDefault(s => s.UserId == signup.UserId && s.EventId == signup.EventId);
-                signedUser.Sign = false;
 
-                var tempLineup = _context.Lineups.FirstOrDefault(l => l.UserId == signup.UserId && l.EventId == signup.EventId);
-                if(tempLineup != null)
+                foreach(Signup s in signups)
                 {
-                    _context.Lineups.Remove(tempLineup);
+                    s.Sign = false;
+                    _context.Signups.Update(s);
+                    var tempLineup = _context.Lineups.FirstOrDefault(l => l.UserId == signup.UserId && l.EventId == signup.EventId);
+                    if (tempLineup != null)
+                    {
+                        _context.Lineups.Remove(tempLineup);
+                    }
                 }
-
-                _context.Signups.Update(signedUser);
+                
                 _context.SaveChanges();
             }
             

@@ -286,6 +286,8 @@ namespace WowGuildApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CharacterId");
+
                     b.Property<int>("EventId");
 
                     b.Property<string>("Note");
@@ -298,9 +300,19 @@ namespace WowGuildApp.Migrations
 
                     b.Property<bool>("Sign");
 
+                    b.Property<int>("SpecializationFour");
+
+                    b.Property<int>("SpecializationOne");
+
+                    b.Property<int>("SpecializationThree");
+
+                    b.Property<int>("SpecializationTwo");
+
                     b.Property<string>("UserId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
 
                     b.HasIndex("EventId");
 
@@ -454,6 +466,11 @@ namespace WowGuildApp.Migrations
 
             modelBuilder.Entity("WowGuildApp.Models.Signup", b =>
                 {
+                    b.HasOne("WowGuildApp.Models.Character", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("WowGuildApp.Models.Event", "Event")
                         .WithMany("Signups")
                         .HasForeignKey("EventId")
