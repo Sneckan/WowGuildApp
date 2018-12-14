@@ -232,10 +232,10 @@ namespace WowGuildApp
             //stops signups after last signup time
             if(_context.Events.FirstOrDefault(e=>e.Id==signup.EventId).LastSignup> DateTime.Now)
             {
-
-                var signedUser = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId && s.CharacterId == signup.CharacterId);
+                var signedUser = _context.Signups.Where(s => s.EventId == signup.EventId && s.UserId == signup.UserId).ToList();
+                var signedCharacter = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId && s.CharacterId == signup.CharacterId);
                 //if signup doesnt exist, create new. else update
-                if (signedUser==null)
+                if (signedCharacter==null)
                 {
                     signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
                     signup.Event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
@@ -248,11 +248,24 @@ namespace WowGuildApp
 
                 else
                 {
-                    signedUser.Sign = true;
-                    signedUser.RoleDps = signup.RoleDps;
-                    signedUser.RoleHealer = signup.RoleHealer;
-                    signedUser.RoleTank = signup.RoleTank;
-                    _context.Signups.Update(signedUser);
+                    foreach(Signup s in signedUser)
+                    {
+                        //if user has unsigned characters, remove them from unsigned list
+                        if(s.CharacterId == signup.CharacterId)
+                        {
+                            signedCharacter.Sign = true;
+                            signedCharacter.RoleDps = signup.RoleDps;
+                            signedCharacter.RoleHealer = signup.RoleHealer;
+                            signedCharacter.RoleTank = signup.RoleTank;
+                            _context.Signups.Update(signedCharacter);
+                        }
+                        else if(!s.Sign)
+                        {
+                            _context.Signups.Remove(s);
+                        }
+                    }
+
+                    
                     _context.SaveChanges();
                 }
 
