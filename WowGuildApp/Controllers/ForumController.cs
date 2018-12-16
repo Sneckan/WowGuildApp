@@ -81,7 +81,7 @@ namespace WowGuildApp
             }
 
             var post = await db.Posts
-                .Include(p => p.User).ThenInclude(u => u.Characters).Include(p => p.Comments).FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.User).ThenInclude(u => u.Characters).FirstOrDefaultAsync(m => m.Id == id);
 
             if (post == null)
             {
@@ -117,12 +117,12 @@ namespace WowGuildApp
             if (page <= 1)
             {
                 viewModel.Page = 1;
-                comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Take(pageSize).ToList();
+                comments = db.Comments.Include(c => c.User).ThenInclude(u => u.Characters).Where(c => c.PostId == post.Id).Take(pageSize).ToList();
             }
             //Check how many comments to skip and take if page is above 1
             else
             {
-                comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
+                comments = db.Comments.Include(c => c.User).ThenInclude(u => u.Characters).Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
             }
 
             viewModel.Comments = comments;

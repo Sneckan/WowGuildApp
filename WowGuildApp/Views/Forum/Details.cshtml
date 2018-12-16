@@ -9,7 +9,7 @@
     <div class="container" style="background-color: #1d2124;margin-bottom: 10px;">
         <div class="post-header col" style="color: white;padding: 10px;">
             <h1 style="color: white;">@Model.Post.Title</h1>
-            <p>@Model.Post.Date.ToString("MMMM") @Model.Post.Date.Day @Model.Post.Date.Year, @Model.Post.Date.ToString("HH:mm:ss")</p>
+            <p>@Model.Post.Date.ToString("MMMM") @Model.Post.Date.Day, @Model.Post.Date.Year, @Model.Post.Date.ToString("HH:mm:ss")</p>
             <p><a href="@Url.Action("Index", "Forum")">Forum</a> / <a href="@Url.Action("Category", "Forum", new { category = @Model.Category })">@Model.Category</a></p>
             @if (Model.Post.UserId == Model.CurrentUser)
             {
@@ -21,75 +21,145 @@
         <div style="clear: both"></div>
 
         <div class="row" style="border-top: 2px solid #373a3e">
-            <div class="user-profile col" data-user="@Model.Post.User.UserName">
-                <div style="padding: 5px;">
-                    <img class="user-image" src="~/images/character.PNG" />
-                    <p class="user-username">@Model.Post.User.UserName</p>
-                    <p class="user-guild-rank">Guildrank: Officer</p>
-                    <p class="user-class">120 Draenei Paladin</p>
-                    <p class="user-ilvl">Item level: @Model.Post.User.Characters.Where(c => c.Main).First().AverageItemLevelEquipped</p>
-                    <p class="user-postcount">@Model.Post.User.PostCount posts</p>
-                </div>
-            </div>
-
-            <div class="post-content col-9" style="margin: 0;padding: 10px;">
-                @Html.Raw(Model.Post.Content)
-                @if (Model.Post.LastEdited != null)
+            @{var character = @Model.Post.User.Characters.Where(c => c.Main).FirstOrDefault();}
+            @{
+                if (character != null)
                 {
-                    <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @Model.Post.LastEdited</p>
-                }
-            </div>
-        </div>
-    </div>
-}
-
-<div style="margin-top: 20px">
-    @Html.Partial("_CommentPagingPartial", Model)
-
-    @foreach (var item in Model.Comments)
-    {
-        <div class="post-comment-wrapper">
-            <div class="post-comment-header" style="background-color: #171a1c;padding: 5px 10px 5px 10px;">
-                <p style="display: inline-block;margin: 0;padding: 0;font-size: 14px;">@item.Date.ToString("MMMM") @item.Date.Day @item.Date.Year, @item.Date.ToString("HH:mm:ss")</p>
-                <a id="post@(item.Id)" class="post-comment-url" href="/Forum/Details/@Model.Post.Id?page=@Model.Page#post@(item.Id)" style="display: inline-block;float: right;font-size:14px;">#@(Model.Post.Comments.FindIndex(p => p.Id == item.Id) + 1)</a>
-            </div>
-
-            <div class="post-comment" style="background-color: #1d2124;padding: 20px;padding-bottom: 5px">
-                <div class="row">
-                    <div class="user-profile col" data-user="@item.User.UserName">
+                    <div class="user-profile col" data-user="@Model.Post.User.UserName">
                         <div style="padding: 5px;">
-                            <img class="user-image" src="~/images/character.PNG" />
-                            <p class="user-username">@item.User.UserName</p>
+                            <img class="user-image" src="http://render-eu.worldofwarcraft.com/character/@character.Thumbnail" />
+                            <p class="user-username">@Model.Post.User.UserName</p>
                             <p class="user-guild-rank">Guildrank: Officer</p>
-                            <p class="user-class">120 Draenei Paladin</p>
-                            <p class="user-ilvl">ilvl: 381</p>
-                            <p class="user-postcount">@item.User.PostCount posts</p>
+                            <p class="user-class @Model.GetClassCss(character.Class)">@character.Level @Model.GetRace(@character.Race) @Model.GetClass(character.Class)</p>
+                            <p class="user-ilvl">Item level: @character.AverageItemLevelEquipped</p>
+                            <p class="user-postcount">@Model.Post.User.PostCount posts</p>
                         </div>
                     </div>
 
                     <div class="post-content col-9" style="margin: 0;padding: 10px;">
-                        @Html.Raw(item.Text)
-                        @if (item.LastEdited != null)
-	                    {
-                            <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @item.LastEdited</p>
-	                    }
-                    </div>
-                </div>
-     
-                <div class="reply-wrapper">
-                    <div>
-                        @if (Model.CurrentUser == item.UserId)
+                        @Html.Raw(Model.Post.Content)
+                        @if (Model.Post.LastEdited != null)
                         {
-                            <a class="edit-comment" href="/Forum/EditComment/@item.Id" data-toggle="tooltip" title="Edit comment"><i class="fas fa-edit"></i></a>
-                            <a class="delete-comment" href="/Forum/DeleteComment/@item.Id" data-toggle="tooltip" title="Delete comment"><i class="fas fa-trash-alt"></i></a>
+                            <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @Model.Post.LastEdited</p>
                         }
-                        <p class="reply-with-quote">Reply with quote <i class="fas fa-quote-right"></i></p>
+                    </div>
+                }
+
+                else
+                {
+                    <div class="user-profile col" data-user="@Model.Post.User.UserName">
+                        <div style="padding: 5px;">
+                            <img class="user-image" src="https://eu.battle.net/wow/static/images/2d/avatar/9-0.jpg" />
+                            <p class="user-username">@Model.Post.User.UserName</p>
+                            <p class="user-postcount">@Model.Post.User.PostCount posts</p>
+                        </div>
+                    </div>
+
+                    <div class="post-content col-9" style="margin: 0;padding: 10px;">
+                        @Html.Raw(Model.Post.Content)
+                        @if (Model.Post.LastEdited != null)
+                        {
+                            <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @Model.Post.LastEdited</p>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+
+    <div style="margin-top: 20px">
+        @Html.Partial("_CommentPagingPartial", Model)
+
+        @foreach (var item in Model.Comments)
+        {
+            var character2 = item.User.Characters.Where(c => c.Main).FirstOrDefault();
+            if (character2 != null)
+            {
+                <div class="post-comment-wrapper">
+                    <div class="post-comment-header" style="background-color: #171a1c;padding: 5px 10px 5px 10px;">
+                        <p style="display: inline-block;margin: 0;padding: 0;font-size: 14px;">@item.Date.ToString("MMMM") @item.Date.Day, @item.Date.Year, @item.Date.ToString("HH:mm:ss")</p>
+                        <a id="post@(item.Id)" class="post-comment-url" href="/Forum/Details/@Model.Post.Id?page=@Model.Page#post@(item.Id)" style="display: inline-block;float: right;font-size:14px;">#@(Model.Post.Comments.FindIndex(p => p.Id == item.Id) + 1)</a>
+                    </div>
+
+                    <div class="post-comment" style="background-color: #1d2124;padding: 20px;padding-bottom: 5px">
+                        <div class="row">
+                            <div class="user-profile col" data-user="@item.User.UserName">
+                                <div style="padding: 5px;">
+                                    <img class="user-image" src="http://render-eu.worldofwarcraft.com/character/@character2.Thumbnail" alt="user-avatar" />
+                                    <p class="user-username">@item.User.UserName</p>
+                                    <p class="user-guild-rank">Guildrank: Officer</p>
+                                    <p class="user-class @Model.GetClassCss(character2.Class)">@character2.Level @Model.GetRace(@character2.Race) @Model.GetClass(character2.Class)</p>
+                                    <p class="user-ilvl">Item level: @character2.AverageItemLevelEquipped</p>
+                                    <p class="user-postcount">@item.User.PostCount posts</p>
+                                </div>
+                            </div>
+
+                            <div class="post-content col-9" style="margin: 0;padding: 10px;">
+                                @Html.Raw(item.Text)
+                                @if (item.LastEdited != null)
+                                {
+                                    <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @item.LastEdited</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="reply-wrapper">
+                            <div>
+                                @if (Model.CurrentUser == item.UserId)
+                                {
+                                    <a class="edit-comment" href="/Forum/EditComment/@item.Id" data-toggle="tooltip" title="Edit comment"><i class="fas fa-edit"></i></a>
+                                    <a class="delete-comment" href="/Forum/DeleteComment/@item.Id" data-toggle="tooltip" title="Delete comment"><i class="fas fa-trash-alt"></i></a>
+                                }
+                                <p class="reply-with-quote">Reply with quote <i class="fas fa-quote-right"></i></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    }
-</div>
+            }
+
+            else
+            {
+                <div class="post-comment-wrapper">
+                    <div class="post-comment-header" style="background-color: #171a1c;padding: 5px 10px 5px 10px;">
+                        <p style="display: inline-block;margin: 0;padding: 0;font-size: 14px;">@item.Date.ToString("MMMM") @item.Date.Day, @item.Date.Year, @item.Date.ToString("HH:mm:ss")</p>
+                        <a id="post@(item.Id)" class="post-comment-url" href="/Forum/Details/@Model.Post.Id?page=@Model.Page#post@(item.Id)" style="display: inline-block;float: right;font-size:14px;">#@(Model.Post.Comments.FindIndex(p => p.Id == item.Id) + 1)</a>
+                    </div>
+
+                    <div class="post-comment" style="background-color: #1d2124;padding: 20px;padding-bottom: 5px">
+                        <div class="row">
+                            <div class="user-profile col" data-user="@item.User.UserName">
+                                <div style="padding: 5px;">
+                                    <img class="user-image" src="https://eu.battle.net/wow/static/images/2d/avatar/9-0.jpg" alt="user-avatar" />
+                                    <p class="user-username">@item.User.UserName</p>
+                                    <p class="user-postcount">@item.User.PostCount posts</p>
+                                </div>
+                            </div>
+
+                            <div class="post-content col-9" style="margin: 0;padding: 10px;">
+                                @Html.Raw(item.Text)
+                                @if (item.LastEdited != null)
+                                {
+                                    <p class="last-edited" style="padding-top: 30px;font-style: italic;font-size: 14px;">Last edited: @item.LastEdited</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="reply-wrapper">
+                            <div>
+                                @if (Model.CurrentUser == item.UserId)
+                                {
+                                    <a class="edit-comment" href="/Forum/EditComment/@item.Id" data-toggle="tooltip" title="Edit comment"><i class="fas fa-edit"></i></a>
+                                    <a class="delete-comment" href="/Forum/DeleteComment/@item.Id" data-toggle="tooltip" title="Delete comment"><i class="fas fa-trash-alt"></i></a>
+                                }
+                                <p class="reply-with-quote">Reply with quote <i class="fas fa-quote-right"></i></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 
 <div style="background-color: #1d2124;margin-top: 20px;padding: 20px;">
     <form asp-controller="Forum" asp-action="CreateComment" method="post">

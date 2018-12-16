@@ -75,6 +75,10 @@ a {
     opacity: 0.5;
 }
 
+.post-content img {
+    max-width: 100%;
+}
+
 .user-profile {
     color: white;
     padding: 5px;
@@ -88,6 +92,8 @@ a {
 .user-image {
     float: left;
     margin-right: 10px;
+    width: 84px;
+    height: 84px;
 }
 
 .user-username {
@@ -219,6 +225,54 @@ a {
         color: white;
         cursor: pointer;
     }
+
+.class-warrior {
+    color: #c69b6d;
+}
+
+.class-paladin {
+    color: #f48cba;
+}
+
+.class-hunter {
+    color: #aad372;
+}
+
+.class-rogue {
+    color: #fff468;
+}
+
+.class-priest {
+    color: #f0ebe0;
+}
+
+.class-dk {
+    color: #c41e3b;
+}
+
+.class-shaman {
+    color: #2359ff;
+}
+
+.class-mage {
+    color: #68ccef;
+}
+
+.class-warlock {
+    color: #9382c9;
+}
+
+.class-monk {
+    color: #00ffba;
+}
+
+.class-druid {
+    color: #ff7c0a;
+}
+
+.class-dh {
+    color: #a330c9;
+}
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
