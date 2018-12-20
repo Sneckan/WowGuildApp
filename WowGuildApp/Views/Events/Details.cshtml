@@ -106,7 +106,7 @@
                             <input type="hidden" asp-for="Signup.UserId" value="@UserManager.GetUserId(User)" />
                             <input type="hidden" asp-for="Signup.EventId" value="@Model.Event.Id" />
 
-                            <select asp-for="Signup.CharacterId">
+                            <select asp-for="Signup.CharacterId" id="character-selection">
                                 @foreach(Character character in Model.Characters)
                                 {
                                     <option value="@character.Id">@character.Name</option>
@@ -114,25 +114,8 @@
 
                             </select>
 
-                            <div class="form-group form-check">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" data-val="true" data-val-required="The RoleDps field is required." id="Signup_RoleDps" name="Signup.RoleDps" type="checkbox" value="true">
-                                    Damage
-                                </label>
-                            </div>
-
-                            <div class="form-group form-check">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" data-val="true" data-val-required="The RoleHealer field is required." id="Signup_RoleHealer" name="Signup.RoleHealer" type="checkbox" value="true">
-                                    Healer
-                                </label>
-                            </div>
-
-                            <div class="form-group form-check">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" data-val="true" data-val-required="The RoleTank field is required." id="Signup_RoleTank" name="Signup.RoleTank" type="checkbox" value="true">
-                                    Tank
-                                </label>
+                            <div id="spec-selection">
+                                @await Html.PartialAsync("_SpecializationSelect", Model.Characters[0])
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -156,33 +139,70 @@
 @section Scripts{
 
 
-    <script>
-        $(function () {
+<script>
+
+    var specializationSelection = new Array();
+
+    var getCharacters = function (url, characterId) {
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (result) {
+                specializationSelection.push(
+                    {
+                        characterId: characterId,
+                        characterHtml: result
+                    });
+            }
+        });
+    };
+
+    $(function () {
+
+        $('body').on('submit', 'form.signup-note-form', function (e) {
+
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+            url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function (result) {
+
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    $('#details-list').html(result);
+
+                }
+            })
+
+        });
 
 
 
-            $('body').on('submit', 'form.signup-note-form', function (e) {
 
-                e.preventDefault();
-                var form = $(this);
-                var url = form.attr('action');
 
-                $.ajax({
-                url: url,
-                    type: "POST",
-                    data: form.serialize(),
-                    success: function (result) {
+        @foreach(Character c in Model.Characters)
+        {
+            <text>
+        var url = '@Url.Action("SpecializationSelect",c)';
+        var characterId = @c.Id;
+        getCharacters(url, characterId);
 
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
+            </text>
+        }
 
-                        $('#details-list').html(result);
+        
 
-                    }
-                })
+        $('select#character-selection').change(function () {
+            $('#spec-selection').html(specializationSelection.find(obj => {
+                return obj.characterId == $('#character-selection').val()
+            }).characterHtml)
+        });
 
-            });
-
-            });
-    </script>
+    });
+</script>
 }

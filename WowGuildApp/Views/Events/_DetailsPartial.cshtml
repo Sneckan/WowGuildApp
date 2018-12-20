@@ -139,7 +139,7 @@
         <div class="col">
             <h3>Damage Dealer</h3>
             <div class="list-group">
-                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleDps == true))
+                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne==1 ||s.SpecializationTwo == 1 || s.SpecializationThree == 1 || s.SpecializationFour == 1)))
                 {
                     @await Html.PartialAsync("_SignupNotePartial", s)
                 }
@@ -148,7 +148,7 @@
         <div class="col">
             <h3>Healer</h3>
             <div class="list-group">
-                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleHealer == true))
+                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne == 2 || s.SpecializationTwo == 2 || s.SpecializationThree == 2 || s.SpecializationFour == 2)))
                 {
                     @await Html.PartialAsync("_SignupNotePartial", s)
 
@@ -158,7 +158,7 @@
         <div class="col">
             <h3>Tank</h3>
             <div class="list-group">
-                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleTank == true))
+                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne == 3 || s.SpecializationTwo == 3 || s.SpecializationThree == 3 || s.SpecializationFour == 3)))
                 {
                     @await Html.PartialAsync("_SignupNotePartial", s)
                 }
