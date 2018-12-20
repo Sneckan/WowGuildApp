@@ -56,14 +56,7 @@ namespace WowGuildApp
 
             var @host = await _context.Users.FirstOrDefaultAsync(u => u.Id == @event.hostId);
 
-            var @signups = _context.Signups.Where(s => s.EventId == @event.Id).ToList();
-
-            foreach (Signup s in @signups)
-            {
-                //Gets the user objects for each signup
-                s.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == s.UserId);
-                s.Character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == s.CharacterId);
-            }
+            var @signups = _context.Signups.Where(s => s.EventId == @event.Id).Include(s=>s.User).Include(s => s.Character).Include(s => s.Specializations).ToList();
 
             var @lineups = _context.Lineups.Where(l => l.EventId == @event.Id).ToList();
 
