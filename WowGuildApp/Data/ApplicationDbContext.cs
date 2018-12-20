@@ -12,6 +12,7 @@ namespace WowGuildApp.Data
     {
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        
 
 
         public DbSet<Character> Characters { get; set; }
@@ -34,5 +35,6 @@ namespace WowGuildApp.Data
         public DbSet<WowGuildApp.Models.Event> Events { get; set; }
         public DbSet<WowGuildApp.Models.Signup> Signups { get; set; }
         public DbSet<WowGuildApp.Models.Lineup> Lineups { get; set; }
+        public DbSet<Specialization> Specializations { get; set; }
     }
 }

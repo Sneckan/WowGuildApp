@@ -18,6 +18,8 @@ namespace WowGuildApp.Models
         public int CharacterId { get; set; }
         public Character Character{ get; set; }
 
+        public List<Specialization> Specializations { get; set; }
+
         public bool Sign { get; set; }
 
         public int SpecializationOne { get; set; }
