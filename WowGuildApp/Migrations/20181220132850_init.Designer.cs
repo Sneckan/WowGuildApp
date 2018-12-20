@@ -10,7 +10,7 @@ using WowGuildApp.Data;
 namespace WowGuildApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181214141146_init")]
+    [Migration("20181220132850_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -323,6 +323,29 @@ namespace WowGuildApp.Migrations
                     b.ToTable("Signups");
                 });
 
+            modelBuilder.Entity("WowGuildApp.Models.Specialization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CharacterId");
+
+                    b.Property<int>("Role");
+
+                    b.Property<int?>("SignupId");
+
+                    b.Property<string>("SpecializationName");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("SignupId");
+
+                    b.ToTable("Specializations");
+                });
+
             modelBuilder.Entity("WowGuildApp.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -481,6 +504,18 @@ namespace WowGuildApp.Migrations
                     b.HasOne("WowGuildApp.Models.User", "User")
                         .WithMany("Signups")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("WowGuildApp.Models.Specialization", b =>
+                {
+                    b.HasOne("WowGuildApp.Models.Character", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WowGuildApp.Models.Signup", "Signup")
+                        .WithMany("Specializations")
+                        .HasForeignKey("SignupId");
                 });
 #pragma warning restore 612, 618
         }

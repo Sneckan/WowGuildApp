@@ -336,6 +336,34 @@ namespace WowGuildApp.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Specializations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CharacterId = table.Column<int>(nullable: false),
+                    SignupId = table.Column<int>(nullable: true),
+                    SpecializationName = table.Column<string>(nullable: true),
+                    Role = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Specializations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Specializations_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Specializations_Signups_SignupId",
+                        column: x => x.SignupId,
+                        principalTable: "Signups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -424,6 +452,16 @@ namespace WowGuildApp.Migrations
                 name: "IX_Signups_UserId",
                 table: "Signups",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Specializations_CharacterId",
+                table: "Specializations",
+                column: "CharacterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Specializations_SignupId",
+                table: "Specializations",
+                column: "SignupId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -450,13 +488,16 @@ namespace WowGuildApp.Migrations
                 name: "Lineups");
 
             migrationBuilder.DropTable(
-                name: "Signups");
+                name: "Specializations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Signups");
 
             migrationBuilder.DropTable(
                 name: "Characters");

@@ -227,6 +227,9 @@ namespace WowGuildApp
             {
                 var signedUser = _context.Signups.Where(s => s.EventId == signup.EventId && s.UserId == signup.UserId).ToList();
                 var signedCharacter = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId && s.CharacterId == signup.CharacterId);
+
+                var signedSpec = _context.Specializations.FirstOrDefault(s => s.Signup.Id == signup.Id);
+
                 //if signup doesnt exist, create new. else update
                 if (signedCharacter==null)
                 {

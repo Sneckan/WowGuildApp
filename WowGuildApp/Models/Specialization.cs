@@ -12,7 +12,6 @@ namespace WowGuildApp.Models
         public int CharacterId { get; set; }
         public Character Character { get; set; }
 
-        public int SignupId { get; set; }
         public Signup Signup { get; set; }
 
         public string SpecializationName { get; set; }
