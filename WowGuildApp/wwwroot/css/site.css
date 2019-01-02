@@ -50,6 +50,10 @@ a {
     transition: color 0.3s ease-in-out;
 }
 
+.list-group-item {
+    color: black;
+}
+
 .forum-posts tr td {
     border-top: 2px solid;
     border-color: #171a1c !important;

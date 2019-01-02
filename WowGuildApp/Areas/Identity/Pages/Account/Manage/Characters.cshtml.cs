@@ -100,13 +100,24 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             if (character == null)
             {
                 var _access_token = await _userManager.GetAuthenticationTokenAsync(user, "BattleNet", "access_token");
+                //API request for character data
                 string requestUri = "https://eu.api.blizzard.com/wow/character/" + Input.Realm + "/" + Input.Name + "?fields=items&locale=en_gb&access_token=" + _access_token;
+                //API request for guild data with hardcoded guild name
+                string guildRequestUri = "https://eu.api.blizzard.com/wow/guild/" + Input.Realm + "/Allurium?fields=members&locale=en_gb&access_token=" + _access_token;
 
+                //API request for character data
                 var request = new HttpRequestMessage(
                     HttpMethod.Get, requestUri);
                 var client = _clientFactory.CreateClient();
                 var response = await client.SendAsync(request);
 
+                //API request to get guild rank
+                var request2 = new HttpRequestMessage(
+                    HttpMethod.Get, guildRequestUri);
+                var client2 = _clientFactory.CreateClient();
+                var response2 = await client.SendAsync(request2);
+
+                //If first request fails, update error message
                 if (!response.IsSuccessStatusCode)
                 {
                     StatusMessage = "Error: Could not update profile";
@@ -114,11 +125,14 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
                 }
 
                 var json = await response.Content.ReadAsStringAsync();
+                var json2 = await response2.Content.ReadAsStringAsync();
                 var root = JObject.Parse(json);
+                var root2 = JObject.Parse(json2);
                 var averageItemLevel = root["items"]["averageItemLevelEquipped"];
+                //Get guild rank for the selected character
+                JToken guildRankToken = root2.SelectToken("$.members[?(@.character.name == '"+Input.Name+"')].rank");
 
                 Character Character = JsonConvert.DeserializeObject<Character>(json);
-
                 Character.AverageItemLevelEquipped = Convert.ToInt32(averageItemLevel);
                 Character.User = user;
                 Character.UserId = user.Id;
@@ -126,6 +140,19 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
 
                 await db.Characters.AddAsync(Character);
                 user.Characters.Add(Character);
+                //Check if guildRankToken is not null
+                if (guildRankToken != null)
+                {
+                    //Convert JSON to int
+                    int guildRank = guildRankToken.ToObject<int>();
+
+                    //Check if the rank from the API call is higher than the users current rank. Update the users guildrank if true
+                    //Lower number means higher rank (Guildmaster has number 0)
+                    if (guildRank < user.GuildRank)
+                    {
+                        user.GuildRank = guildRank;
+                    }
+                }
                 db.Users.Update(user);
                 await db.SaveChangesAsync();
             }
@@ -133,7 +160,6 @@ namespace WowGuildApp.Areas.Identity.Pages.Account.Manage
             //if character already exist, make it the users main if not already the main
             else if(!character.Main)
             {
-
                 foreach(Character c in db.Characters.Where(i => i.UserId == user.Id).ToList())
                 {
                     c.Main = !Input.Main;

@@ -29,7 +29,7 @@ namespace WowGuildApp
         public IActionResult Category(string category, int page = 1)
         {
             //Paging for posts
-            var pageSize = 5;
+            var pageSize = 10;
             var skip = pageSize * (page - 1);
             var totalOfPosts = db.Posts.Where(p => p.Category == category).Count();
             var canPage = skip < totalOfPosts;
@@ -42,7 +42,9 @@ namespace WowGuildApp
             viewModel.Page = page;
             //Get posts in specific category and order by latest comment
             viewModel.Posts = db.Posts.Where(p => p.Category == category).Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User)
-                .OrderByDescending(p => p.Comments
+                .OrderByDescending(p => p.Sticky)
+                //.ThenByDescending(p => p.Date).Where(p => p.Comments == null)
+                .ThenByDescending(p => p.Comments
                 .OrderByDescending(c => c.Date).Select(c => c.Date).FirstOrDefault())
                 .Skip(skip).Take(pageSize).ToList();
             viewModel.Category = category;
