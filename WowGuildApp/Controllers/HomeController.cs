@@ -21,7 +21,8 @@ namespace WowGuildApp.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var latestPost = db.Posts.Where(p => p.Category == "News").OrderByDescending(p => p.Date).FirstOrDefault();
+            return View(latestPost);
         }
 
         public IActionResult About()
