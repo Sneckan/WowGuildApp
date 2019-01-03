@@ -12,6 +12,7 @@ namespace WowGuildApp.ViewModels
         public Lineup Lineup { get; set; }
         public List<Signup> Signups { get; set; }
         public List<Lineup> Lineups { get; set; }
+        public List<Specialization> Specializations { get; set; }
 
     }
 }

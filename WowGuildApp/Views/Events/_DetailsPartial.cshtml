@@ -139,29 +139,42 @@
         <div class="col">
             <h3>Damage Dealer</h3>
             <div class="list-group">
-                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne==1 ||s.SpecializationTwo == 1 || s.SpecializationThree == 1 || s.SpecializationFour == 1)))
+                @foreach (Specialization s in Model.SignupSpecializations.Where(s => s.Signup.Sign == true && s.Role == 1))
                 {
                     @await Html.PartialAsync("_SignupNotePartial", s)
                 }
+
+                @*@foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne == 1 || s.SpecializationTwo == 1 || s.SpecializationThree == 1 || s.SpecializationFour == 1)))
+                {
+                    @await Html.PartialAsync("_SignupNotePartial", s)
+                }*@
             </div>
         </div>
         <div class="col">
             <h3>Healer</h3>
             <div class="list-group">
-                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne == 2 || s.SpecializationTwo == 2 || s.SpecializationThree == 2 || s.SpecializationFour == 2)))
+                @foreach (Specialization s in Model.SignupSpecializations.Where(s => s.Signup.Sign == true && s.Role == 2))
                 {
                     @await Html.PartialAsync("_SignupNotePartial", s)
-
                 }
+                @*@foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne == 2 || s.SpecializationTwo == 2 || s.SpecializationThree == 2 || s.SpecializationFour == 2)))
+        {
+            @await Html.PartialAsync("_SignupNotePartial", s)
+
+        }*@
             </div>
         </div>
         <div class="col">
             <h3>Tank</h3>
             <div class="list-group">
-                @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne == 3 || s.SpecializationTwo == 3 || s.SpecializationThree == 3 || s.SpecializationFour == 3)))
+                @foreach (Specialization s in Model.SignupSpecializations.Where(s => s.Signup.Sign == true && s.Role == 3))
                 {
                     @await Html.PartialAsync("_SignupNotePartial", s)
                 }
+                @*@foreach (Signup s in Model.Signups.Where(s => s.Sign == true && (s.SpecializationOne == 3 || s.SpecializationTwo == 3 || s.SpecializationThree == 3 || s.SpecializationFour == 3)))
+        {
+            @await Html.PartialAsync("_SignupNotePartial", s)
+        }*@
             </div>
         </div>
     </div>
@@ -175,7 +188,7 @@
             <ul class="list-group">
                 @foreach (Signup s in Model.Signups.Where(s => s.Sign == false))
                 {
-                    @await Html.PartialAsync("_SignupNotePartial", s)
+                    @await Html.PartialAsync("_UnsignNotePartial", s)
                 }
             </ul>
         </div>

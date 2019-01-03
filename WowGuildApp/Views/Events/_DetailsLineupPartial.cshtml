@@ -5,7 +5,7 @@
 <div class="list-group-item">
     <div>
 
-        @Model.User.UserName
+        @Model.Signup.Character.Name
 
         <p data-toggle="modal" data-target="#lineup-@Model.Id">
             Officer Note: @if (Model.OfficerNote != null)
@@ -13,9 +13,13 @@
 
         </p>
 
-        <p>
-            Note: @if (Model.Note != null)
-            {<text>@Model.Note</text>}
-        </p>
+        @if (Model.Note != null)
+        {
+            <p>
+                <text>
+                    Note: @Model.Note
+                </text>
+            </p>
+        }
     </div>
 </div>

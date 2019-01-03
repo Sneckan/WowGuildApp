@@ -101,22 +101,25 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form asp-action="Signup" method="post">
+                    <form asp-action="SignupAsync" method="post" class="form-group">
                         <div class="modal-body">
-                            <input type="hidden" asp-for="Signup.UserId" value="@UserManager.GetUserId(User)" />
-                            <input type="hidden" asp-for="Signup.EventId" value="@Model.Event.Id" />
+                            <input type="hidden" asp-for="Input.EventId" value="@Model.Event.Id" />
+                            <div class="form-group">
+                                <label for="character-selection">Select Character</label>
+                                <select asp-for="Input.CharacterId" id="character-selection" class="form-control">
+                                    @foreach (Character character in Model.Characters)
+                                    {
+                                        <option value="@character.Id">@character.Name</option>
+                                    }
 
-                            <select asp-for="Signup.CharacterId" id="character-selection">
-                                @foreach(Character character in Model.Characters)
-                                {
-                                    <option value="@character.Id">@character.Name</option>
-                                }
-
-                            </select>
+                                </select>
+                            </div>
 
                             <div id="spec-selection">
                                 @await Html.PartialAsync("_SpecializationSelect", Model.Characters[0])
                             </div>
+
+                            <textarea asp-for="Input.Note" class="form-control" placeholder="Note..."></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -11,3 +11,8 @@ $fcEvent : red;
     background-color: $fcEvent;
     border-color: lighten($fcEvent,10%)
 }
+
+.character-card-text{
+    list-style:none;
+    padding-left:0;
+}

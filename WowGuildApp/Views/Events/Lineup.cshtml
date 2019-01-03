@@ -27,21 +27,25 @@
             <div class="col">
                 <h3>Damage Dealer</h3>
                 <ul class="list-group">
-                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleDps == true))
+                    @foreach (Specialization s in Model.Specializations.Where(s => s.Signup.Sign == true && s.Role == 1))
                     {
                         <li class="list-group-item">
-                            @s.User.UserName
-                            @if (s.Note != null)
+                            @s.Signup.Character.Name
+                            @if (s.Signup.Note != null)
                             {
                                 <p>
-                                    @s.Note
+                                    @s.Signup.Note
                                 </p>
                             }
 
                             <form asp-action="AddToLineup" class="form-inline lineup-form">
-                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
-                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
+
+                                <input asp-for="Lineup.SignupId" type="hidden" value="@s.Signup.Id" />
+
+                                <input asp-for="Lineup.EventId" type="hidden" value="@s.Signup.EventId" />
+                                <input asp-for="Lineup.SignupId" type="hidden" value="@s.SignupId" />
                                 <input asp-for="Lineup.Role" type="hidden" value="1" />
+                                <input asp-for="Lineup.SpecializationName" type="hidden" value="@s.SpecializationName" />
                                 <select asp-for="Lineup.Group" class="form-control">
                                     <option value="1">Group 1</option>
                                     <option value="2">Group 2</option>
@@ -51,56 +55,29 @@
                             </form>
                         </li>
                     }
+
+
                 </ul>
             </div>
             <div class="col">
                 <h3>Healer</h3>
                 <ul class="list-group">
-                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleHealer == true))
+                    @foreach (Specialization s in Model.Specializations.Where(s => s.Signup.Sign == true && s.Role == 2))
                     {
                         <li class="list-group-item">
-                            @s.User.UserName
-                            @if (s.Note != null)
+                            @s.Signup.Character.Name
+                            @if (s.Signup.Note != null)
                             {
                                 <p>
-                                    @s.Note
+                                    @s.Signup.Note
                                 </p>
                             }
-                            <form asp-action="AddToLineup" method="post" class="form-inline lineup-form">
-                                <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
-                                <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
-                                <input asp-for="Lineup.Role" type="hidden" value="2" />
-                                <select asp-for="Lineup.Group" class="form-control">
-                                    <option value="1">Group 1</option>
-                                    <option value="2">Group 2</option>
-                                    <option value="-1">Reserve</option>
-                                </select>
-                                <input type="submit" class="btn btn-primary" value="Add" />
-                            </form>
-                        </li>
-                    }
-                </ul>
-            </div>
-            <div class="col">
-                <h3>Tank</h3>
-                <ul class="list-group">
-                    @foreach (Signup s in Model.Signups.Where(s => s.Sign == true && s.RoleTank == true))
-                    {
-                        <li class="list-group-item">
-
-                            <div>
-                                @s.User.UserName
-                                @if (s.Note != null)
-                                {
-                                    <p>
-                                        @s.Note
-                                    </p>
-                                }
 
                                 <form asp-action="AddToLineup" class="form-inline lineup-form">
-                                    <input asp-for="Lineup.EventId" type="hidden" value="@s.EventId" />
-                                    <input asp-for="Lineup.UserId" type="hidden" value="@s.UserId" />
-                                    <input asp-for="Lineup.Role" type="hidden" value="3" />
+                                    <input asp-for="Lineup.EventId" type="hidden" value="@s.Signup.EventId" />
+                                    <input asp-for="Lineup.SignupId" type="hidden" value="@s.SignupId" />
+                                    <input asp-for="Lineup.Role" type="hidden" value="2" />
+                                    <input asp-for="Lineup.SpecializationName" type="hidden" value="@s.SpecializationName" />
                                     <select asp-for="Lineup.Group" class="form-control">
                                         <option value="1">Group 1</option>
                                         <option value="2">Group 2</option>
@@ -108,9 +85,37 @@
                                     </select>
                                     <input type="submit" class="btn btn-primary" value="Add" />
                                 </form>
-                            </div>
                         </li>
+                    }
+                </ul>
+            </div>
+            <div class="col">
+                <h3>Tank</h3>
+                <ul class="list-group">
+                    @foreach (Specialization s in Model.Specializations.Where(s => s.Signup.Sign == true && s.Role == 3))
+                    {
+                        <li class="list-group-item">
+                            @s.Signup.Character.Name
+                            @if (s.Signup.Note != null)
+                            {
+                                <p>
+                                    @s.Signup.Note
+                                </p>
+                            }
 
+                                <form asp-action="AddToLineup" class="form-inline lineup-form">
+                                    <input asp-for="Lineup.EventId" type="hidden" value="@s.Signup.EventId" />
+                                    <input asp-for="Lineup.SignupId" type="hidden" value="@s.SignupId" />
+                                    <input asp-for="Lineup.Role" type="hidden" value="3" />
+                                    <input asp-for="Lineup.SpecializationName" type="hidden" value="@s.SpecializationName" />
+                                    <select asp-for="Lineup.Group" class="form-control">
+                                        <option value="1">Group 1</option>
+                                        <option value="2">Group 2</option>
+                                        <option value="-1">Reserve</option>
+                                    </select>
+                                    <input type="submit" class="btn btn-primary" value="Add" />
+                                </form>
+                        </li>
                     }
                 </ul>
             </div>
@@ -129,7 +134,7 @@
                     @foreach (Signup s in Model.Signups.Where(s => s.Sign == false))
                     {
                         <li class="list-group-item">
-                            @s.User.UserName
+                            @s.Character.Name
                             @if (s.Note != null)
                             {
                                 <p>

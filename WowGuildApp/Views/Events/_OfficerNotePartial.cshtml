@@ -4,7 +4,7 @@
 <div class="list-group-item">
     <div>
 
-        @Model.User.UserName
+        @Model.Signup.Character.Name
 
         <p data-toggle="modal" data-target="#lineup-@Model.Id">
             Officer Note: @if (Model.OfficerNote != null)
@@ -18,8 +18,8 @@
         </p>
 
         <form asp-action="RemoveFromLineup" method="delete" class="form-inline lineup-form">
-            <input asp-for="@Model.EventId" type="hidden" value="@Model.EventId" />
-            <input asp-for="@Model.UserId" type="hidden" value="@Model.UserId" />
+            <input asp-for="EventId" type="hidden" value="@Model.EventId" />
+            <input asp-for="SignupId" type="hidden" value="@Model.SignupId" />
             <input type="submit" class="btn btn-danger" value="Remove" />
         </form>
     </div>
@@ -28,7 +28,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">@Model.User.UserName Note</h5>
+                <h5 class="modal-title" id="exampleModalLabel">@Model.Signup.Character.Name Officer Note</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -37,7 +37,7 @@
                 <form asp-action="OfficerNote" class="officer-note-form" id="officer-note-form-@Model.Id">
                     <textarea asp-for="OfficerNote" class="form-control"></textarea>
                     <input asp-for="EventId" type="hidden" value="@Model.EventId" />
-                    <input asp-for="UserId" type="hidden" value="@Model.UserId" />
+                    <input asp-for="SignupId" type="hidden" value="@Model.SignupId" />
                 </form>
             </div>
             <div class="modal-footer">

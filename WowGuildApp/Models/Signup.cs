@@ -21,15 +21,7 @@ namespace WowGuildApp.Models
         public List<Specialization> Specializations { get; set; }
 
         public bool Sign { get; set; }
-
-        public int SpecializationOne { get; set; }
-        public int SpecializationTwo { get; set; }
-        public int SpecializationThree { get; set; }
-        public int SpecializationFour { get; set; }
-
-        public bool RoleDps { get; set; }
-        public bool RoleHealer { get; set; }
-        public bool RoleTank { get; set; }
+        
 
         public string Note { get; set; }
     }

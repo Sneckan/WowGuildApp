@@ -10,7 +10,7 @@ using WowGuildApp.Data;
 namespace WowGuildApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181220132850_init")]
+    [Migration("20190103092532_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -244,13 +244,15 @@ namespace WowGuildApp.Migrations
 
                     b.Property<int>("Role");
 
-                    b.Property<string>("UserId");
+                    b.Property<int?>("SignupId");
+
+                    b.Property<string>("SpecializationName");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SignupId");
 
                     b.ToTable("Lineups");
                 });
@@ -294,21 +296,7 @@ namespace WowGuildApp.Migrations
 
                     b.Property<string>("Note");
 
-                    b.Property<bool>("RoleDps");
-
-                    b.Property<bool>("RoleHealer");
-
-                    b.Property<bool>("RoleTank");
-
                     b.Property<bool>("Sign");
-
-                    b.Property<int>("SpecializationFour");
-
-                    b.Property<int>("SpecializationOne");
-
-                    b.Property<int>("SpecializationThree");
-
-                    b.Property<int>("SpecializationTwo");
 
                     b.Property<string>("UserId");
 
@@ -329,17 +317,13 @@ namespace WowGuildApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CharacterId");
-
                     b.Property<int>("Role");
 
-                    b.Property<int?>("SignupId");
+                    b.Property<int>("SignupId");
 
                     b.Property<string>("SpecializationName");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CharacterId");
 
                     b.HasIndex("SignupId");
 
@@ -477,9 +461,9 @@ namespace WowGuildApp.Migrations
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("WowGuildApp.Models.User", "User")
+                    b.HasOne("WowGuildApp.Models.Signup", "Signup")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("SignupId");
                 });
 
             modelBuilder.Entity("WowGuildApp.Models.Post", b =>
@@ -508,14 +492,10 @@ namespace WowGuildApp.Migrations
 
             modelBuilder.Entity("WowGuildApp.Models.Specialization", b =>
                 {
-                    b.HasOne("WowGuildApp.Models.Character", "Character")
-                        .WithMany()
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("WowGuildApp.Models.Signup", "Signup")
                         .WithMany("Specializations")
-                        .HasForeignKey("SignupId");
+                        .HasForeignKey("SignupId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

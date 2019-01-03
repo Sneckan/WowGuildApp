@@ -236,36 +236,6 @@ namespace WowGuildApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Lineups",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    EventId = table.Column<int>(nullable: false),
-                    UserId = table.Column<string>(nullable: true),
-                    Role = table.Column<int>(nullable: false),
-                    Group = table.Column<int>(nullable: false),
-                    OfficerNote = table.Column<string>(nullable: true),
-                    Note = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Lineups", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Lineups_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Lineups_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Signups",
                 columns: table => new
                 {
@@ -275,13 +245,6 @@ namespace WowGuildApp.Migrations
                     UserId = table.Column<string>(nullable: true),
                     CharacterId = table.Column<int>(nullable: false),
                     Sign = table.Column<bool>(nullable: false),
-                    SpecializationOne = table.Column<int>(nullable: false),
-                    SpecializationTwo = table.Column<int>(nullable: false),
-                    SpecializationThree = table.Column<int>(nullable: false),
-                    SpecializationFour = table.Column<int>(nullable: false),
-                    RoleDps = table.Column<bool>(nullable: false),
-                    RoleHealer = table.Column<bool>(nullable: false),
-                    RoleTank = table.Column<bool>(nullable: false),
                     Note = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -337,13 +300,43 @@ namespace WowGuildApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Lineups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    EventId = table.Column<int>(nullable: false),
+                    SignupId = table.Column<int>(nullable: true),
+                    Role = table.Column<int>(nullable: false),
+                    SpecializationName = table.Column<string>(nullable: true),
+                    Group = table.Column<int>(nullable: false),
+                    OfficerNote = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lineups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lineups_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Lineups_Signups_SignupId",
+                        column: x => x.SignupId,
+                        principalTable: "Signups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Specializations",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CharacterId = table.Column<int>(nullable: false),
-                    SignupId = table.Column<int>(nullable: true),
+                    SignupId = table.Column<int>(nullable: false),
                     SpecializationName = table.Column<string>(nullable: true),
                     Role = table.Column<int>(nullable: false)
                 },
@@ -351,17 +344,11 @@ namespace WowGuildApp.Migrations
                 {
                     table.PrimaryKey("PK_Specializations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Specializations_Characters_CharacterId",
-                        column: x => x.CharacterId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Specializations_Signups_SignupId",
                         column: x => x.SignupId,
                         principalTable: "Signups",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -429,9 +416,9 @@ namespace WowGuildApp.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lineups_UserId",
+                name: "IX_Lineups_SignupId",
                 table: "Lineups",
-                column: "UserId");
+                column: "SignupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
@@ -452,11 +439,6 @@ namespace WowGuildApp.Migrations
                 name: "IX_Signups_UserId",
                 table: "Signups",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Specializations_CharacterId",
-                table: "Specializations",
-                column: "CharacterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Specializations_SignupId",

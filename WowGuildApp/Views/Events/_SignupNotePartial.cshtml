@@ -1,4 +1,4 @@
-﻿@model Signup
+﻿@model Specialization
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
@@ -8,39 +8,56 @@
 
 
 
-<div class="list-group-item" @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.UserId) { <text> data-toggle="modal" data-target="#signup-@Model.Id" </text> } style="color:black;">
-    <div>
+<div class="list-group-item" @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Signup.UserId) { <text> data-toggle="modal" data-target="#signup-@Model.Id" </text> } style="color:black;">
+    <div class="row">
         @{
-            var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + Model.Character.Thumbnail;
+            var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + Model.Signup.Character.Thumbnail;
         }
-        <img src="@imgSrc" />
-        @Model.Character.Name
+        <div class="col-lg-4">
+            <img src="@imgSrc" />
+        </div>
+        <div class="col">
+            <h5>
+                @Model.Signup.Character.Name
+            </h5>
+            <ul class="character-card-text">
+                <li>
+                    @Model.SpecializationName
+                </li>
+                @if (!Model.Signup.Character.Main)
+                {
+                    <li class="font-weight-light">
+                        Alt
+                    </li>
+                }
+            </ul>
 
-        @if (Model.Note != null)
-        {
-            <p>
-                Note: @Model.Note
-            </p>
-        }
+            @if (Model.Signup.Note != null)
+            {
+                <p>
+                    Note: @Model.Signup.Note
+                </p>
+            }
+
+        </div>
     </div>
 </div>
 
-@if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.UserId)
+@if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Signup.UserId)
 {
     <div class="modal fade" id="signup-@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">@Model.User.UserName Note</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">@Model.Signup.User.UserName Note</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form asp-action="SignupNote" class="signup-note-form" method="post" id="signup-note-@Model.Id">
-                        <textarea asp-for="Note" class="form-control"></textarea>
-                        <input asp-for="EventId" type="hidden" value="@Model.EventId" />
-                        <input asp-for="UserId" type="hidden" value="@Model.UserId" />
+                    <form asp-action="SignupNoteAsync" class="signup-note-form" method="post" id="signup-note-@Model.Id">
+                        <textarea asp-for="Signup.Note" class="form-control" placeholder="Note..."></textarea>
+                        <input asp-for="Signup.EventId" type="hidden" value="@Model.Signup.EventId" />
                     </form>
                 </div>
                 <div class="modal-footer">

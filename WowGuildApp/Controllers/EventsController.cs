@@ -58,11 +58,13 @@ namespace WowGuildApp
 
             var @signups = _context.Signups.Where(s => s.EventId == @event.Id).Include(s=>s.User).Include(s => s.Character).Include(s => s.Specializations).ToList();
 
-            var @lineups = _context.Lineups.Where(l => l.EventId == @event.Id).ToList();
+            var @lineups = _context.Lineups.Where(l => l.EventId == @event.Id).Include(l=>l.Event).ToList();
 
             var currentUser = await GetCurrentUserAsync();
 
             var @characters = _context.Characters.Where(c => c.UserId == currentUser.Id).ToList();
+
+            var @SignupSpecializations = _context.Specializations.Where(s => s.Signup.EventId == @event.Id).ToList();
             
             EventDetailViewModel model = new EventDetailViewModel
             {
@@ -72,6 +74,7 @@ namespace WowGuildApp
                 Lineups = lineups,
                 ConfirmedLineup = @event.ConfirmedLineup,
                 Characters = characters,
+                SignupSpecializations = SignupSpecializations
                 
             };
 
@@ -218,57 +221,191 @@ namespace WowGuildApp
             return _context.Events.Any(e => e.Id == id);
         }
 
+        [HttpGet]
+        public IActionResult SpecializationSelect(Character character)
+        {
+            Character model = _context.Characters.FirstOrDefault(c => c.Id == character.Id);
+
+            return PartialView("_SpecializationSelect", model);
+        }
+
         //POST: Events/Signup/
         [HttpPost]
-        public IActionResult Signup(Signup signup)
+        public async Task<IActionResult> SignupAsync(SignupInputModel input)
         {
             //stops signups after last signup time
-            if(_context.Events.FirstOrDefault(e=>e.Id==signup.EventId).LastSignup> DateTime.Now)
+            if(_context.Events.FirstOrDefault(e=>e.Id==input.EventId).LastSignup> DateTime.Now)
             {
-                var signedUser = _context.Signups.Where(s => s.EventId == signup.EventId && s.UserId == signup.UserId).ToList();
-                var signedCharacter = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId && s.CharacterId == signup.CharacterId);
 
-                var signedSpec = _context.Specializations.FirstOrDefault(s => s.Signup.Id == signup.Id);
+                var currentUser = await GetCurrentUserAsync();
 
-                //if signup doesnt exist, create new. else update
-                if (signedCharacter==null)
+                Signup signup = await _context.Signups.FirstOrDefaultAsync(s => s.EventId == input.EventId && s.CharacterId == input.CharacterId && s.UserId == currentUser.Id);
+
+                try
                 {
-                    signup.User = _context.Users.FirstOrDefault(u => u.Id == signup.UserId);
-                    signup.Event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
-                    signup.Character = _context.Characters.FirstOrDefault(c => c.Id == signup.CharacterId);
-                    signup.Sign = true;
+                    signup.Specializations = await _context.Specializations.Where(s => s.SignupId == signup.Id).ToListAsync();
+                }
+                catch
+                {
 
+                }
+
+
+
+
+                if (signup == null)
+                {
+                    signup = new Signup()
+                    {
+                        CharacterId = input.CharacterId,
+                        Character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == input.CharacterId),
+                        EventId = input.EventId,
+                        Event = await _context.Events.FirstOrDefaultAsync(e => e.Id == input.EventId),
+                        UserId = currentUser.Id,
+                        User = currentUser,
+                        Sign = true,
+                        Note = input.Note,
+                        Specializations = new List<Specialization>()
+                    };
+                    
                     _context.Signups.Add(signup);
-                    _context.SaveChanges();
+
+                    if(input.SpecializationOneRole != 0)
+                    {
+                         var specc = new Specialization()
+                        {
+                            Role = input.SpecializationOneRole,
+                            SpecializationName = input.SpecializationOneName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+
+                    if (input.SpecializationTwoRole != 0)
+                    {
+                        var specc = new Specialization()
+                        {
+                            Role = input.SpecializationTwoRole,
+                            SpecializationName = input.SpecializationTwoName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+
+                    if (input.SpecializationThreeRole != 0)
+                    {
+                        var specc = new Specialization()
+                        {
+                            Role = input.SpecializationThreeRole,
+                            SpecializationName = input.SpecializationThreeName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+
+                    if (input.SpecializationFourRole != 0)
+                    {
+                        var specc = new Specialization()
+                        {
+                            Role = input.SpecializationFourRole,
+                            SpecializationName = input.SpecializationFourName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+                    
                 }
 
                 else
                 {
-                    foreach(Signup s in signedUser)
+                    foreach(Specialization s in signup.Specializations)
                     {
-                        //if user has unsigned characters, remove them from unsigned list
-                        if(s.CharacterId == signup.CharacterId)
+                        _context.Remove(s);
+                    }
+
+                    signup.Sign = true;
+
+                    signup.Note = input.Note;
+
+                    signup.Specializations = new List<Specialization>();
+
+                    if (input.SpecializationOneRole != 0)
+                    {
+                        var specc = new Specialization()
                         {
-                            signedCharacter.Sign = true;
-                            signedCharacter.RoleDps = signup.RoleDps;
-                            signedCharacter.RoleHealer = signup.RoleHealer;
-                            signedCharacter.RoleTank = signup.RoleTank;
-                            _context.Signups.Update(signedCharacter);
-                        }
-                        else if(!s.Sign)
+                            Role = input.SpecializationOneRole,
+                            SpecializationName = input.SpecializationOneName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+
+                    if (input.SpecializationTwoRole != 0)
+                    {
+                        var specc = new Specialization()
+                        {
+                            Role = input.SpecializationTwoRole,
+                            SpecializationName = input.SpecializationTwoName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+
+                    if (input.SpecializationThreeRole != 0)
+                    {
+                        var specc = new Specialization()
+                        {
+                            Role = input.SpecializationThreeRole,
+                            SpecializationName = input.SpecializationThreeName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+
+                    if (input.SpecializationFourRole != 0)
+                    {
+                        var specc = new Specialization()
+                        {
+                            Role = input.SpecializationFourRole,
+                            SpecializationName = input.SpecializationFourName,
+                            Signup = signup
+                        };
+
+                        signup.Specializations.Add(specc);
+                        _context.Specializations.Add(specc);
+                    }
+
+                    var UserSignups = await _context.Signups.Where(s => s.EventId == input.EventId && s.UserId == currentUser.Id).ToListAsync();
+
+                    foreach (Signup s in UserSignups)
+                    {
+                        if (s.Sign == false)
                         {
                             _context.Signups.Remove(s);
                         }
                     }
-
-                    
-                    _context.SaveChanges();
                 }
+
+                _context.SaveChanges();
 
             }
 
 
-            return RedirectToAction("Details/"+ signup.EventId);
+            return RedirectToAction("Details/"+ input.EventId);
         }
 
         [HttpPost]
@@ -295,7 +432,7 @@ namespace WowGuildApp
                 {
                     s.Sign = false;
                     _context.Signups.Update(s);
-                    var tempLineup = _context.Lineups.FirstOrDefault(l => l.UserId == signup.UserId && l.EventId == signup.EventId);
+                    var tempLineup = _context.Lineups.FirstOrDefault(l => l.SignupId == s.Id);
                     if (tempLineup != null)
                     {
                         _context.Lineups.Remove(tempLineup);
@@ -323,13 +460,11 @@ namespace WowGuildApp
                 LineupViewModel model = new LineupViewModel
                 {
                     Event = await _context.Events.FirstOrDefaultAsync(e => e.Id == id),
-                    Signups = _context.Signups.Where(s => s.EventId == id).ToList(),
+                    Signups = _context.Signups.Where(s => s.EventId == id).Include(s=>s.User).Include(s=>s.Character).ToList(),
                     Lineups = _context.Lineups.Where(l => l.EventId == id).ToList(),
+                    Specializations = _context.Specializations.Where(s => s.Signup.EventId == id).ToList()
                 };
-                foreach (Signup s in model.Signups)
-                {
-                    s.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == s.UserId);
-                }
+                
 
                 return View(model);
 
@@ -342,16 +477,20 @@ namespace WowGuildApp
         public IActionResult AddToLineup(Lineup lineup)
         {
             //if lineup doesnt exist, create new lineup. else update
-            if(_context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId) == null)
+
+            var signup = _context.Signups.FirstOrDefault(s => s.Id == lineup.SignupId);
+
+            if(_context.Lineups.FirstOrDefault(l => l.SignupId == signup.Id) == null)
             {
-                lineup.Note = _context.Signups.FirstOrDefault(s => s.EventId == lineup.EventId && s.UserId == lineup.UserId).Note;
+                lineup.Note = signup.Note;
+                lineup.Signup = signup;
                 _context.Lineups.Add(lineup);
             }
             else
             {
-                var existingLineup = _context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId);
-
+                var existingLineup = _context.Lineups.FirstOrDefault(l => l.SignupId == signup.Id);
                 existingLineup.Role = lineup.Role;
+                existingLineup.SpecializationName = lineup.SpecializationName;
                 existingLineup.Group = lineup.Group;
                 _context.Lineups.Update(existingLineup);
             }
@@ -362,14 +501,12 @@ namespace WowGuildApp
             //Reloads model for partial view
             LineupViewModel model = new LineupViewModel
             {
-                Event = _context.Events.FirstOrDefault(e => e.Id == lineup.EventId),
-                Signups = _context.Signups.Where(s => s.EventId == lineup.EventId).ToList(),
-                Lineups = _context.Lineups.Where(l => l.EventId == lineup.EventId).ToList(),
+                Event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId),
+                Signups = _context.Signups.Where(s => s.EventId == signup.EventId).Include(s => s.User).Include(s => s.Character).ToList(),
+                Lineups = _context.Lineups.Where(l => l.EventId == signup.EventId).ToList(),
+                Specializations = _context.Specializations.Where(s => s.Signup.EventId == signup.EventId).ToList(),
             };
-            foreach (Signup s in model.Signups)
-            {
-                s.User = _context.Users.FirstOrDefault(u => u.Id == s.UserId);
-            }
+            
 
             return PartialView("_LineupPartial",model);
         }
@@ -379,7 +516,7 @@ namespace WowGuildApp
         [HttpDelete]
         public IActionResult RemoveFromLineup(Lineup lineup)
         {
-            var temp = _context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId);
+            var temp = _context.Lineups.FirstOrDefault(l => l.SignupId == lineup.SignupId);
             if (temp != null)
             {
                 _context.Lineups.Remove(temp);
@@ -406,7 +543,7 @@ namespace WowGuildApp
         {
             if(_context.Events.FirstOrDefault(e => e.Id==lineup.EventId).InviteTime>DateTime.Now)
             {
-                var dbLineup = _context.Lineups.FirstOrDefault(l => l.EventId == lineup.EventId && l.UserId == lineup.UserId);
+                var dbLineup = _context.Lineups.FirstOrDefault(l => l.SignupId == lineup.SignupId);
                 dbLineup.OfficerNote = lineup.OfficerNote;    
                 _context.Lineups.Update(dbLineup);
                 _context.SaveChanges();
@@ -416,13 +553,10 @@ namespace WowGuildApp
             LineupViewModel model = new LineupViewModel
             {
                 Event = _context.Events.FirstOrDefault(e => e.Id == lineup.EventId),
-                Signups = _context.Signups.Where(s => s.EventId == lineup.EventId).ToList(),
-                Lineups = _context.Lineups.Where(l => l.EventId == lineup.EventId).ToList(),
+                Signups = _context.Signups.Where(s => s.EventId == lineup.EventId).Include(s=>s.Character).Include(s=>s.User).ToList(),
+                Lineups = _context.Lineups.Where(l => l.EventId == lineup.EventId).Include(l=>l.Signup).ToList(),
+                Specializations = _context.Specializations.Where(s => s.SignupId == lineup.SignupId).ToList()
             };
-            foreach (Signup s in model.Signups)
-            {
-                s.User = _context.Users.FirstOrDefault(u => u.Id == s.UserId);
-            }
 
             return PartialView("_LineupPartial", model);
         }
@@ -430,13 +564,16 @@ namespace WowGuildApp
 
         //POST Events/Lineup/3
         [HttpPost]
-        public IActionResult SignupNote(Signup signup)
+        public async Task<IActionResult> SignupNoteAsync(Signup signup)
         {
             //stops signup note if after invite time
             if(_context.Events.FirstOrDefault(e => e.Id == signup.EventId).InviteTime>DateTime.Now)
             {
-                var dbSignup = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == signup.UserId);
-                var dbLineup = _context.Lineups.FirstOrDefault(l => l.EventId == signup.EventId && l.UserId == signup.UserId);
+                var currentUser = await GetCurrentUserAsync();
+
+
+                var dbSignup = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == currentUser.Id);
+                var dbLineup = _context.Lineups.FirstOrDefault(l => l.SignupId==dbSignup.Id);
                 dbSignup.Note = signup.Note;
                 _context.Signups.Update(dbSignup);
 
@@ -453,8 +590,9 @@ namespace WowGuildApp
             //Reloads model for partial view
 
             var @event = _context.Events.FirstOrDefault(e => e.Id == signup.EventId);
-            var @signups = _context.Signups.Where(s => s.EventId == @event.Id).ToList();
-            var @lineups = _context.Lineups.Where(l => l.EventId == @event.Id).ToList();
+            var @signups = _context.Signups.Where(s => s.EventId == @event.Id).Include(s => s.User).Include(s => s.Character).ToList();
+            var @lineups = _context.Lineups.Where(l => l.EventId == @event.Id).Include(l => l.Signup).ToList();
+            var @specializations = _context.Specializations.Where(s => s.Signup.EventId == @event.Id).ToList();
 
             var model = new EventDetailViewModel
             {
@@ -463,17 +601,8 @@ namespace WowGuildApp
                 ConfirmedLineup = @event.ConfirmedLineup,
                 Lineups = @lineups,
                 Signups = @signups,
+                SignupSpecializations = specializations
             };
-
-            foreach(Signup s in @signups)
-            {
-                s.User = _context.Users.FirstOrDefault(u => u.Id == s.UserId);
-            }
-
-           foreach(Lineup l in @lineups)
-            {
-                l.User = _context.Users.FirstOrDefault(u => u.Id == l.UserId);
-            }
 
 
             return PartialView("_DetailsPartial", model);
