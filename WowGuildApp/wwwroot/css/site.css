@@ -50,6 +50,18 @@ a {
     transition: color 0.3s ease-in-out;
 }
 
+.guild-info {
+    text-align: center;
+    background-color: #1d2124;
+    padding:10px;
+    margin-right:10px;
+    border-radius: 5px;
+}
+
+.guild-info a img {
+    margin-bottom: 15px;
+}
+
 .list-group-item {
     color: black;
 }

@@ -29,8 +29,8 @@
                         <div style="padding: 5px;">
                             <img class="user-image" src="http://render-eu.worldofwarcraft.com/character/@character.Thumbnail" />
                             <p class="user-username">@Model.Post.User.UserName</p>
-                            <p class="user-guild-rank">Guildrank: @Model.Post.User.GuildRank</p>
-                            <p class="user-class @Model.GetClassCss(character.Class)">@character.Level @Model.GetRace(@character.Race) @Model.GetClass(character.Class)</p>
+                            <p class="user-guild-rank" style="background-color: dimgray;padding:3px;display:inline-block;">@BlizzAPIHelpers.GetGuildrank(@Model.Post.User.GuildRank)</p>
+                            <p class="user-class @BlizzAPIHelpers.GetClassCss(character.Class)">@character.Level @BlizzAPIHelpers.GetRace(@character.Race) @BlizzAPIHelpers.GetClassName(character.Class)</p>
                             <p class="user-ilvl">Item level: @character.AverageItemLevelEquipped</p>
                             <p class="user-postcount">@Model.Post.User.PostCount posts</p>
                         </div>
@@ -88,8 +88,8 @@
                                 <div style="padding: 5px;">
                                     <img class="user-image" src="http://render-eu.worldofwarcraft.com/character/@character2.Thumbnail" alt="user-avatar" />
                                     <p class="user-username">@item.User.UserName</p>
-                                    <p class="user-guild-rank">Guildrank: @item.User.GuildRank</p>
-                                    <p class="user-class @Model.GetClassCss(character2.Class)">@character2.Level @Model.GetRace(@character2.Race) @Model.GetClass(character2.Class)</p>
+                                    <p class="user-guild-rank">@BlizzAPIHelpers.GetGuildrank(item.User.GuildRank)</p>
+                                    <p class="user-class @BlizzAPIHelpers.GetClassCss(character2.Class)">@character2.Level @BlizzAPIHelpers.GetRace(@character2.Race) @BlizzAPIHelpers.GetClassName(character2.Class)</p>
                                     <p class="user-ilvl">Item level: @character2.AverageItemLevelEquipped</p>
                                     <p class="user-postcount">@item.User.PostCount posts</p>
                                 </div>
