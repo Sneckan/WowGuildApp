@@ -37,35 +37,26 @@
             <a href="http://eu.battle.net/wow/en/guild/turalyon/Dawn_of_the_Undead/"><img alt="Armory" title="Armory" data-toggle="tooltip" src="https://vignette.wikia.nocookie.net/wyrmrest/images/e/e7/Official_wow_icon.png/revision/latest?cb=20170426091511" width="100" height="100" /></a>
         </div>
         <div class="col-md" style="background-color: #1d2124;padding:10px;border-radius: 5px;">
-            @{
-                if (Model.Character != null)
+            @if (Model.LatestPost != null)
+            {                 
+            <div>
+                @if (Model.Character != null)
                 {
-                    <div>
-                        <img src="http://render-eu.worldofwarcraft.com/character/@Model.Character.Thumbnail" style="margin-right:10px;border-radius: 50%;display: inline-block;" />
-                        <div style="display: inline-block;vertical-align: top;">
-                            <a href="@Url.Action("Details", "Forum", new { id = Model.LatestPost.Id})"><h2 style="margin: 0;">@Model.LatestPost.Title</h2></a>
-                            <p style="font-size: 12px;margin:0">Posted by @Model.LatestPost.User.UserName, @Model.LatestPost.Date.ToString("MMMM") @Model.LatestPost.Date.Day, @Model.LatestPost.Date.Year, @Model.LatestPost.Date.ToString("HH:mm:ss")</p>
-                        </div>
-                    </div>
-
-                    <div class="post-content">
-                        @Html.Raw(Model.LatestPost.Content)
-                    </div>
+                    <img src="http://render-eu.worldofwarcraft.com/character/@Model.Character.Thumbnail" style="margin-right:10px;border-radius: 50%;display: inline-block;" />
                 }
                 else
                 {
-                    <div>
-                        <img src="https://eu.battle.net/wow/static/images/2d/avatar/9-0.jpg" style="margin-right:10px;border-radius: 50%;display: inline-block;" />
-                        <div style="display: inline-block;vertical-align: top;">
-                            <a href="@Url.Action("Details", "Forum", new { id = Model.LatestPost.Id})"><h2 style="margin: 0;">@Model.LatestPost.Title</h2></a>
-                            <p style="font-size: 12px;margin:0">Posted by @Model.LatestPost.User.UserName, @Model.LatestPost.Date.ToString("MMMM") @Model.LatestPost.Date.Day, @Model.LatestPost.Date.Year, @Model.LatestPost.Date.ToString("HH:mm:ss")</p>
-                        </div>
-                    </div>
-
-                    <div class="post-content">
-                        @Html.Raw(Model.LatestPost.Content)
-                    </div>
+                    <img src="https://eu.battle.net/wow/static/images/2d/avatar/9-0.jpg" style="margin-right:10px;border-radius: 50%;display: inline-block;" />
                 }
+                <div style="display: inline-block;vertical-align: top;">
+                    <a href="@Url.Action("Details", "Forum", new { id = Model.LatestPost.Id})"><h2 style="margin: 0;">@Model.LatestPost.Title</h2></a>
+                    <p style="font-size: 12px;margin:0">Posted by @Model.LatestPost.User.UserName, @Model.LatestPost.Date.ToString("MMMM") @Model.LatestPost.Date.Day, @Model.LatestPost.Date.Year, @Model.LatestPost.Date.ToString("HH:mm:ss")</p>
+                </div>
+            </div>
+
+            <div class="post-content">
+                @Html.Raw(Model.LatestPost.Content)
+            </div> 
             }
         </div>
     </div>
