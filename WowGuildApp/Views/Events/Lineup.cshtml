@@ -30,29 +30,55 @@
                     @foreach (Specialization s in Model.Specializations.Where(s => s.Signup.Sign == true && s.Role == 1))
                     {
                         <li class="list-group-item">
-                            @s.Signup.Character.Name
-                            @if (s.Signup.Note != null)
-                            {
-                                <p>
-                                    @s.Signup.Note
-                                </p>
-                            }
+                            <div class="row">
+                                <div class="col-lg-4 p-0">
+                                    @{
+                                        var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + s.Signup.Character.Thumbnail;
+                                    }
+                                    <img src="@imgSrc" />
+                                </div>
 
-                            <form asp-action="AddToLineup" class="form-inline lineup-form">
+                                <div class="col p-0">
+                                    <h5>
+                                        @s.Signup.Character.Name
+                                    </h5>
+                                    <ul class="character-card-text">
+                                        <li>
+                                            @s.SpecializationName
+                                        </li>
+                                        @if (!s.Signup.Character.Main)
+                                        {
+                                            <li class="font-weight-light">
+                                                Alt
+                                            </li>
+                                        }
+                                    </ul>
+                                    @if (s.Signup.Note != null)
+                                    {
+                                        <p>
+                                            @s.Signup.Note
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <form asp-action="AddToLineup" class="form-inline lineup-form">
 
-                                <input asp-for="Lineup.SignupId" type="hidden" value="@s.Signup.Id" />
+                                    <input asp-for="Lineup.SignupId" type="hidden" value="@s.Signup.Id" />
 
-                                <input asp-for="Lineup.EventId" type="hidden" value="@s.Signup.EventId" />
-                                <input asp-for="Lineup.SignupId" type="hidden" value="@s.SignupId" />
-                                <input asp-for="Lineup.Role" type="hidden" value="1" />
-                                <input asp-for="Lineup.SpecializationName" type="hidden" value="@s.SpecializationName" />
-                                <select asp-for="Lineup.Group" class="form-control">
-                                    <option value="1">Group 1</option>
-                                    <option value="2">Group 2</option>
-                                    <option value="-1">Reserve</option>
-                                </select>
-                                <input type="submit" class="btn btn-primary" value="Add" />
-                            </form>
+                                    <input asp-for="Lineup.EventId" type="hidden" value="@s.Signup.EventId" />
+                                    <input asp-for="Lineup.SignupId" type="hidden" value="@s.SignupId" />
+                                    <input asp-for="Lineup.Role" type="hidden" value="1" />
+                                    <input asp-for="Lineup.SpecializationName" type="hidden" value="@s.SpecializationName" />
+                                    <select asp-for="Lineup.Group" class="form-control">
+                                        <option value="1">Group 1</option>
+                                        <option value="2">Group 2</option>
+                                        <option value="-1">Reserve</option>
+                                    </select>
+                                    <input type="submit" class="btn btn-primary" value="Add" />
+                                </form>
+                            </div>
                         </li>
                     }
 
@@ -65,14 +91,39 @@
                     @foreach (Specialization s in Model.Specializations.Where(s => s.Signup.Sign == true && s.Role == 2))
                     {
                         <li class="list-group-item">
-                            @s.Signup.Character.Name
-                            @if (s.Signup.Note != null)
-                            {
-                                <p>
-                                    @s.Signup.Note
-                                </p>
-                            }
+                            <div class="row">
+                                <div class="col-lg-4 p-0">
+                                    @{
+                                        var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + s.Signup.Character.Thumbnail;
+                                    }
+                                    <img src="@imgSrc" />
+                                </div>
 
+                                <div class="col p-0">
+                                    <h5>
+                                        @s.Signup.Character.Name
+                                    </h5>
+                                    <ul class="character-card-text">
+                                        <li>
+                                            @s.SpecializationName
+                                        </li>
+                                        @if (!s.Signup.Character.Main)
+                                        {
+                                            <li class="font-weight-light">
+                                                Alt
+                                            </li>
+                                        }
+                                    </ul>
+                                    @if (s.Signup.Note != null)
+                                    {
+                                        <p>
+                                            @s.Signup.Note
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
                                 <form asp-action="AddToLineup" class="form-inline lineup-form">
                                     <input asp-for="Lineup.EventId" type="hidden" value="@s.Signup.EventId" />
                                     <input asp-for="Lineup.SignupId" type="hidden" value="@s.SignupId" />
@@ -85,6 +136,7 @@
                                     </select>
                                     <input type="submit" class="btn btn-primary" value="Add" />
                                 </form>
+                            </div>
                         </li>
                     }
                 </ul>
@@ -95,14 +147,39 @@
                     @foreach (Specialization s in Model.Specializations.Where(s => s.Signup.Sign == true && s.Role == 3))
                     {
                         <li class="list-group-item">
-                            @s.Signup.Character.Name
-                            @if (s.Signup.Note != null)
-                            {
-                                <p>
-                                    @s.Signup.Note
-                                </p>
-                            }
+                            <div class="row">
+                                <div class="col-lg-4 p-0">
+                                    @{
+                                        var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + s.Signup.Character.Thumbnail;
+                                    }
+                                    <img src="@imgSrc" />
+                                </div>
 
+                                <div class="col p-0">
+                                    <h5>
+                                        @s.Signup.Character.Name
+                                    </h5>
+                                    <ul class="character-card-text">
+                                        <li>
+                                            @s.SpecializationName
+                                        </li>
+                                        @if (!s.Signup.Character.Main)
+                                        {
+                                            <li class="font-weight-light">
+                                                Alt
+                                            </li>
+                                        }
+                                    </ul>
+                                    @if (s.Signup.Note != null)
+                                    {
+                                        <p>
+                                            @s.Signup.Note
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
                                 <form asp-action="AddToLineup" class="form-inline lineup-form">
                                     <input asp-for="Lineup.EventId" type="hidden" value="@s.Signup.EventId" />
                                     <input asp-for="Lineup.SignupId" type="hidden" value="@s.SignupId" />
@@ -115,6 +192,7 @@
                                     </select>
                                     <input type="submit" class="btn btn-primary" value="Add" />
                                 </form>
+                            </div>
                         </li>
                     }
                 </ul>
@@ -163,7 +241,6 @@
             var form = $(this);
             var url = form.attr('action');
             var method = form.attr('method');
-
             $.ajax({
                 url: url,
                 type: method,
@@ -171,6 +248,7 @@
                 success: function (result) {
                     $('#lineup-list').html(result);
                 }
+                
             })
 
         });

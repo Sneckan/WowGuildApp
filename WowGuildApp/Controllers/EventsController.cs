@@ -517,6 +517,7 @@ namespace WowGuildApp
         public IActionResult RemoveFromLineup(Lineup lineup)
         {
             var temp = _context.Lineups.FirstOrDefault(l => l.SignupId == lineup.SignupId);
+            
             if (temp != null)
             {
                 _context.Lineups.Remove(temp);
@@ -526,13 +527,10 @@ namespace WowGuildApp
             LineupViewModel model = new LineupViewModel
             {
                 Event = _context.Events.FirstOrDefault(e => e.Id == lineup.EventId),
-                Signups = _context.Signups.Where(s => s.EventId == lineup.EventId).ToList(),
+                Signups = _context.Signups.Where(s => s.EventId == lineup.EventId).Include(s=> s.User).Include(s=>s.Character).ToList(),
                 Lineups = _context.Lineups.Where(l => l.EventId == lineup.EventId).ToList(),
+                Specializations = _context.Specializations.Where(s => s.Signup.EventId == lineup.EventId).ToList(),
             };
-            foreach (Signup s in model.Signups)
-            {
-                s.User = _context.Users.FirstOrDefault(u => u.Id == s.UserId);
-            }
 
             return PartialView("_LineupPartial", model);
         }
@@ -572,7 +570,7 @@ namespace WowGuildApp
                 var currentUser = await GetCurrentUserAsync();
 
 
-                var dbSignup = _context.Signups.FirstOrDefault(s => s.EventId == signup.EventId && s.UserId == currentUser.Id);
+                var dbSignup = _context.Signups.FirstOrDefault(s => s.Id == signup.Id);
                 var dbLineup = _context.Lineups.FirstOrDefault(l => l.SignupId==dbSignup.Id);
                 dbSignup.Note = signup.Note;
                 _context.Signups.Update(dbSignup);

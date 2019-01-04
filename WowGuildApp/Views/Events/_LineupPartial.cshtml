@@ -4,7 +4,8 @@
 {
     if (Model.Lineups.Where(l => l.Group == 1).ToList().Count > 0)
     {
-        <div>
+
+        <div class="border my-2">
             <div class="row">
                 <h2 class="mx-auto">Group 1</h2>
             </div>
@@ -44,7 +45,7 @@
     }
     if (Model.Lineups.Where(l => l.Group == 2).ToList().Count > 0)
     {
-        <div>
+        <div class="border my-2">
             <div class="row">
                 <h2 class="mx-auto">Group 2</h2>
             </div>
@@ -84,7 +85,7 @@
     }
     if (Model.Lineups.Where(l => l.Group == -1).ToList().Count > 0)
     {
-        <div>
+        <div class="border my-2">
             <div class="row">
                 <h2 class="mx-auto">Reserve</h2>
             </div>

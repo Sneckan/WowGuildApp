@@ -85,6 +85,9 @@
 
 
     </div>
+    @if (Model.Characters.Count() > 0)
+    {
+
     <div class="col">
         <form asp-action="UnSign" method="post" class="float-right">
             <input type="hidden" asp-for="Signup.UserId" value="@UserManager.GetUserId(User)" />
@@ -107,7 +110,7 @@
                             <div class="form-group">
                                 <label for="character-selection">Select Character</label>
                                 <select asp-for="Input.CharacterId" id="character-selection" class="form-control">
-                                    @foreach (Character character in Model.Characters)
+                                    @foreach (Character character in Model.Characters.OrderByDescending(c => c.Main))
                                     {
                                         <option value="@character.Id">@character.Name</option>
                                     }
@@ -116,7 +119,9 @@
                             </div>
 
                             <div id="spec-selection">
-                                @await Html.PartialAsync("_SpecializationSelect", Model.Characters[0])
+
+                                    @await Html.PartialAsync("_SpecializationSelect", Model.Characters.FirstOrDefault(c => c.Main == true))
+
                             </div>
 
                             <textarea asp-for="Input.Note" class="form-control" placeholder="Note..."></textarea>
@@ -129,9 +134,9 @@
                 </div>
             </div>
         </div>
-
-
     </div>
+    }
+
 </div>
 
 <div id="details-list">

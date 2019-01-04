@@ -3,23 +3,46 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 <div class="list-group-item">
-    <div>
+    <div class="row">
+        <div class="col-lg-4 p-0">
+            @{
+                var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + Model.Signup.Character.Thumbnail;
+            }
+            <img src="@imgSrc" />
+        </div>
+        <div class="col p-0">
+            <h5>
+                @Model.Signup.Character.Name
+            </h5>
+            <ul class="character-card-text">
+                <li>
+                    @Model.SpecializationName
+                </li>
+                @if (!Model.Signup.Character.Main)
+                {
+                    <li class="font-weight-light">
+                        Alt
+                    </li>
+                }
+            </ul>
+            @if (Model.OfficerNote != null)
+            {
+                <p>
+                    Officer Note:
+                    <text>@Model.OfficerNote</text>
 
-        @Model.Signup.Character.Name
+                </p>
+            }
 
-        <p data-toggle="modal" data-target="#lineup-@Model.Id">
-            Officer Note: @if (Model.OfficerNote != null)
-            {<text>@Model.OfficerNote</text>}
+            @if (Model.Note != null)
+            {
+                <p>
+                    <text>
+                        Note: @Model.Note
+                    </text>
+                </p>
+            }
+        </div>
 
-        </p>
-
-        @if (Model.Note != null)
-        {
-            <p>
-                <text>
-                    Note: @Model.Note
-                </text>
-            </p>
-        }
     </div>
 </div>

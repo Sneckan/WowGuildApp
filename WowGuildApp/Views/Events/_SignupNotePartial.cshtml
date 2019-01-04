@@ -8,15 +8,15 @@
 
 
 
-<div class="list-group-item" @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Signup.UserId) { <text> data-toggle="modal" data-target="#signup-@Model.Id" </text> } style="color:black;">
+<div class="list-group-item">
     <div class="row">
         @{
             var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + Model.Signup.Character.Thumbnail;
         }
-        <div class="col-lg-4">
+        <div class="col-lg-4 p-0">
             <img src="@imgSrc" />
         </div>
-        <div class="col">
+        <div class="col p-0">
             <h5>
                 @Model.Signup.Character.Name
             </h5>
@@ -34,8 +34,14 @@
 
             @if (Model.Signup.Note != null)
             {
-                <p>
+                <p @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Signup.UserId) { <text> data-toggle="modal" data-target="#signup-@Model.Id" </text> }>
                     Note: @Model.Signup.Note
+                </p>
+            }
+            else
+            {
+                <p class="font-weight-light" @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Signup.UserId) { <text> data-toggle="modal" data-target="#signup-@Model.Id" </text> }>
+                    Click to add note...
                 </p>
             }
 
@@ -58,6 +64,7 @@
                     <form asp-action="SignupNoteAsync" class="signup-note-form" method="post" id="signup-note-@Model.Id">
                         <textarea asp-for="Signup.Note" class="form-control" placeholder="Note..."></textarea>
                         <input asp-for="Signup.EventId" type="hidden" value="@Model.Signup.EventId" />
+                        <input asp-for="Signup.Id" type="hidden" value="@Model.Signup.Id" />
                     </form>
                 </div>
                 <div class="modal-footer">

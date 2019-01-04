@@ -2,21 +2,48 @@
 @model Lineup
 
 <div class="list-group-item">
-    <div>
+    <div class="row">
+        <div class="col-lg-4 p-0">
+            @{
+                var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + Model.Signup.Character.Thumbnail;
+            }
+            <img src="@imgSrc" />
+        </div>
+        <div class="col p-0">
+            <h5>
+                @Model.Signup.Character.Name
+            </h5>
+            <ul class="character-card-text">
+                <li>
+                    @Model.SpecializationName
+                </li>
+                @if (!Model.Signup.Character.Main)
+                {
+                    <li class="font-weight-light">
+                        Alt
+                    </li>
+                }
+            </ul>
+            <p data-toggle="modal" data-target="#lineup-@Model.Id">
+                Officer Note: @if (Model.OfficerNote != null)
+                {<text>@Model.OfficerNote</text>}
 
-        @Model.Signup.Character.Name
+            </p>
 
-        <p data-toggle="modal" data-target="#lineup-@Model.Id">
-            Officer Note: @if (Model.OfficerNote != null)
-            {<text>@Model.OfficerNote</text>}
+            @if (Model.Note != null)
+            {
+                <p>
+                    <text>
+                        Note: @Model.Note
+                    </text>
+                </p>
+            }
+        </div>
 
-        </p>
 
-        <p>
-            Note: @if (Model.Note != null)
-            {<text>@Model.Note</text>}
-        </p>
-
+    </div>
+    <hr />
+    <div class="row">
         <form asp-action="RemoveFromLineup" method="delete" class="form-inline lineup-form">
             <input asp-for="EventId" type="hidden" value="@Model.EventId" />
             <input asp-for="SignupId" type="hidden" value="@Model.SignupId" />
