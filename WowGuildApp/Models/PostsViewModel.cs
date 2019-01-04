@@ -22,8 +22,7 @@ namespace WowGuildApp.Models
         public int MaxPage { get; set; }
         public string ReturnUrl { get; set; }
         public string CurrentUser { get; set; }
-
-        //[StringLength(300, MinimumLength = 3, ErrorMessage = "Text must be atleast 3 charcters long and cannot exceed 300 characters.")]
+        //[StringLength(300, MinimumLength = 3, ErrorMessage = "css must be atleast 3 charcters long and cannot exceed 300 characters.")]
         public string Text { get; set; }
-    }
+    }   
 }

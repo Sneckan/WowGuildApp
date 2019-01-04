@@ -29,7 +29,7 @@ namespace WowGuildApp
         public IActionResult Category(string category, int page = 1)
         {
             //Paging for posts
-            var pageSize = 5;
+            var pageSize = 10;
             var skip = pageSize * (page - 1);
             var totalOfPosts = db.Posts.Where(p => p.Category == category).Count();
             var canPage = skip < totalOfPosts;
@@ -42,7 +42,9 @@ namespace WowGuildApp
             viewModel.Page = page;
             //Get posts in specific category and order by latest comment
             viewModel.Posts = db.Posts.Where(p => p.Category == category).Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User)
-                .OrderByDescending(p => p.Comments
+                .OrderByDescending(p => p.Sticky)
+                //.ThenByDescending(p => p.Date).Where(p => p.Comments == null)
+                .ThenByDescending(p => p.Comments
                 .OrderByDescending(c => c.Date).Select(c => c.Date).FirstOrDefault())
                 .Skip(skip).Take(pageSize).ToList();
             viewModel.Category = category;
@@ -81,7 +83,7 @@ namespace WowGuildApp
             }
 
             var post = await db.Posts
-                .Include(p => p.User).Include(p => p.Comments).FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.User).ThenInclude(u => u.Characters).FirstOrDefaultAsync(m => m.Id == id);
 
             if (post == null)
             {
@@ -117,12 +119,12 @@ namespace WowGuildApp
             if (page <= 1)
             {
                 viewModel.Page = 1;
-                comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Take(pageSize).ToList();
+                comments = db.Comments.Include(c => c.User).ThenInclude(u => u.Characters).Where(c => c.PostId == post.Id).Take(pageSize).ToList();
             }
             //Check how many comments to skip and take if page is above 1
             else
             {
-                comments = db.Comments.Include(c => c.User).Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
+                comments = db.Comments.Include(c => c.User).ThenInclude(u => u.Characters).Where(c => c.PostId == post.Id).Skip(skip).Take(pageSize).ToList();
             }
 
             viewModel.Comments = comments;

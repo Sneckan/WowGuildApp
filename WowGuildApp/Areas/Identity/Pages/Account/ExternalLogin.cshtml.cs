@@ -117,7 +117,9 @@ namespace WowGuildApp.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.Email, Email = Input.Email };
+                //Get users battletag
+                var battleTag = info.Principal.Identity.Name;
+                var user = new User { UserName = Input.Email, Email = Input.Email, BattleTag = battleTag };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

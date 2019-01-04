@@ -9,6 +9,8 @@ namespace WowGuildApp.Models
 {
     public class User : IdentityUser
     {
+        public string BattleTag { get; set; }
+        public int GuildRank { get; set; }
         public int PostCount { get; set; }
         public User()
         {

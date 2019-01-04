@@ -17,6 +17,7 @@ namespace WowGuildApp.Models
     public string Content { get; set; }
     public DateTime Date { get; set; }
     public DateTime? LastEdited { get; set; }
+    public bool Sticky { get; set; }
     public int ViewCount { get; set; }
     
     public List<Comment> Comments { get; set; }
