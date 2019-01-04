@@ -31,12 +31,13 @@
                     <text>
                         {
                             title: '@i.Title',
-                            start: '@i.Date.ToString("yyyy-MM-dd")',
+                            start: '@i.StartTime.ToString()',
                             id: @i.Id
                         },
                     </text>
                 }
             ],
+            timeFormat:'h:mm',
             eventClick: function (event) {
                 window.open('Events/Details/' + event.id,'_self')
                 return false;

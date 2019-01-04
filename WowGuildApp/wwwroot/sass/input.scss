@@ -7,6 +7,10 @@ $fcEvent : red;
     color: $fcText;
 }
 
+.fc-time {
+    color: $fcText;
+}
+
 .fc-event{
     background-color: $fcEvent;
     border-color: lighten($fcEvent,10%)
