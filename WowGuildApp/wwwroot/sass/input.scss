@@ -2,6 +2,33 @@
 $fcText : white;
 $fcEvent : red;
 
+$fcCalendarBg: #373a3e;
+
+$color-warlock: #9382c9;
+$color-warrior: #c69b6d;
+$color-shaman: #2359ff;
+$color-rogue: #fff468;
+$color-druid: #ff7c0a;
+$color-paladin: #f48cba;
+$color-mage: #68ccef;
+$color-demonhunter: #a330c9;
+$color-deathknight: #c41e3b;
+$color-priest: #f0ebe0;
+$color-hunter: #aad372;
+$color-monk: #00ffba;
+
+body{
+    background-color : #171a1c;
+    color:white;
+}
+
+#calendar{
+    background-color:$fcCalendarBg;
+}
+
+div.fc-bg td.fc-today{
+    background-color: lighten($fcCalendarBg,10%) !important;
+}
 
 .fc-title {
     color: $fcText;
@@ -13,10 +40,283 @@ $fcEvent : red;
 
 .fc-event{
     background-color: $fcEvent;
-    border-color: lighten($fcEvent,10%)
+    border-color: lighten($fcEvent,10%);
+}
+
+.signups{
+    background-color: $fcCalendarBg;
+}
+
+.lineup{
+    background-color: $fcCalendarBg;
+}
+
+.character-card{
+    background-color: lighten($fcCalendarBg, 20%);    
 }
 
 .character-card-text{
     list-style:none;
     padding-left:0;
+}
+
+.character-card-body{
+    color:$fcText;
+}
+
+.modal{
+    color:black;
+}
+
+
+a {
+    transition: color 0.3s ease-in-out;
+}
+
+.guild-info {
+    text-align: center;
+    background-color: #1d2124;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.guild-info a img {
+    margin-bottom: 15px;
+}
+
+.list-group-item {
+    color: black;
+}
+
+.forum-posts tr td {
+    border-top: 2px solid;
+    border-color: #171a1c !important;
+}
+
+.forum-posts thead tr th {
+    border: none !important;
+}
+
+.reply-wrapper {
+    border-top: 2px solid #373a3e;
+    text-align: right;
+}
+
+.reply-with-quote {
+    display: inline-block;
+    font-size: 12px;
+    padding-top: 10px;
+}
+
+.reply-with-quote:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.post-content img {
+    max-width: 100%;
+}
+
+.user-profile {
+    color: white;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.user-profile:hover {
+    cursor: pointer;
+}
+
+.user-image {
+    float: left;
+    margin-right: 10px;
+    width: 84px;
+    height: 84px;
+}
+
+.user-username {
+    margin: 0;
+    font-size: 18px
+}
+
+.user-guild-rank {
+    margin: 0;
+}
+
+.user-class {
+    margin: 0;
+    color: lightpink;
+}
+
+.user-ilvl {
+    margin: 0;
+    color: darkgrey;
+}
+
+.user-postcount {
+    margin: 0;
+    color: darkgrey;
+}
+
+.paging {
+    background-color: #171a1c;
+    padding: 15px;
+    line-height: 20px;
+    border-bottom: 2px solid #373a3e;
+    text-align: right;
+}
+
+.pagination {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination li {
+    display: inline-block;
+    border: 1px solid grey;
+    background-color: white;
+}
+
+.pagination li a {
+    padding: 5px;
+    color: grey;
+}
+
+.pageCount {
+    margin-right: 10px;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 0;
+}
+
+.nextPage, .previousPage {
+    display: inline-block;
+}
+
+.nextPage a, .previousPage a {
+    padding: 5px;
+    color: lightgrey !important;
+}
+
+.activePage {
+    background-color: black !important;
+}
+
+.activePage a {
+    color: white !important;
+}
+
+.edit-post {
+    font-size: 22px;
+    color: orange;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.edit-post:hover {
+    opacity: 0.5;
+    color: orange;
+}
+
+.edit-comment {
+    color: orange;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.edit-comment:hover {
+    opacity: 0.5;
+    color: orange;
+}
+
+.delete-post {
+    font-size: 22px;
+    color: darkred;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.delete-comment {
+    color: darkred;
+    transition: opacity 0.3s ease-in-out;
+    margin-right: 10px;
+}
+
+.delete-post:hover, .delete-comment:hover {
+    opacity: 0.5;
+    color: darkred;
+}
+
+.quote {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #373a3e;
+    border-radius: 5px;
+    border: 2px solid #171a1c;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.go-to-post {
+    margin-right: 10px;
+    color: lightgrey;
+}
+
+.go-to-post:hover {
+    color: white;
+    cursor: pointer;
+}
+
+.class-warrior {
+    color: $color-warrior;
+}
+
+.class-paladin {
+    color: $color-paladin;
+}
+
+.class-hunter {
+    color: $color-hunter;
+}
+
+.class-rogue {
+    color: $color-rogue;
+}
+
+.class-priest {
+    color: $color-priest;
+}
+
+.class-dk {
+    color: $color-deathknight;
+}
+
+.class-shaman {
+    color: $color-shaman;
+}
+
+.class-mage {
+    color: $color-mage;
+}
+
+.class-warlock {
+    color: $color-warlock;
+}
+
+.class-monk {
+    color: $color-monk;
+}
+
+.class-druid {
+    color: $color-druid;
+}
+
+.class-dh {
+    color: $color-demonhunter;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
 }

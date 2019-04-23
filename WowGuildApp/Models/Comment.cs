@@ -11,7 +11,6 @@ namespace WowGuildApp.Models
     [Key]
     public int Id { get; set; }
     [MinLength(3,ErrorMessage = "Text must be atleast 3 characters long.")]
-    [MaxLength(300,ErrorMessage="Text cannot be greater than 300 characters.")]
     public string Text { get; set; }
     public DateTime Date { get; set; }
     public DateTime? LastEdited { get; set; }

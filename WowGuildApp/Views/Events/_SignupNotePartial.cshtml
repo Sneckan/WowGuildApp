@@ -8,7 +8,7 @@
 
 
 
-<div class="list-group-item">
+<div class="list-group-item character-card">
     <div class="row">
         @{
             var imgSrc = "http://render-eu.worldofwarcraft.com/character/" + Model.Signup.Character.Thumbnail;
@@ -16,13 +16,16 @@
         <div class="col-lg-4 p-0">
             <img src="@imgSrc" />
         </div>
-        <div class="col p-0">
+        <div class="col p-0 character-card-body">
             <h5>
                 @Model.Signup.Character.Name
             </h5>
             <ul class="character-card-text">
                 <li>
                     @Model.SpecializationName
+                </li>
+                <li>
+                    ILvl: @Model.Signup.Character.AverageItemLevelEquipped
                 </li>
                 @if (!Model.Signup.Character.Main)
                 {

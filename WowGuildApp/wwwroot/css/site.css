@@ -1,3 +1,16 @@
+body {
+  background-color: #171a1c;
+  color: white;
+}
+
+#calendar {
+  background-color: #373a3e;
+}
+
+div.fc-bg td.fc-today {
+  background-color: #4f5359 !important;
+}
+
 .fc-title {
   color: white;
 }
@@ -11,259 +24,281 @@
   border-color: #ff3333;
 }
 
+.signups {
+  background-color: #373a3e;
+}
+
+.lineup {
+  background-color: #373a3e;
+}
+
+.character-card {
+  background-color: #676d74;
+}
+
 .character-card-text {
   list-style: none;
   padding-left: 0;
 }
 
+.character-card-body {
+  color: white;
+}
+
+.modal {
+  color: black;
+}
+
 a {
-    transition: color 0.3s ease-in-out;
+  transition: color 0.3s ease-in-out;
 }
 
 .guild-info {
-    text-align: center;
-    background-color: #1d2124;
-    padding:10px;
-    margin-right:10px;
-    border-radius: 5px;
+  text-align: center;
+  background-color: #1d2124;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 5px;
 }
 
 .guild-info a img {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .list-group-item {
-    color: black;
+  color: black;
 }
 
 .forum-posts tr td {
-    border-top: 2px solid;
-    border-color: #171a1c !important;
+  border-top: 2px solid;
+  border-color: #171a1c !important;
 }
 
 .forum-posts thead tr th {
-    border: none !important;
+  border: none !important;
 }
 
 .reply-wrapper {
-    border-top: 2px solid #373a3e;
-    text-align: right;
+  border-top: 2px solid #373a3e;
+  text-align: right;
 }
 
 .reply-with-quote {
-    display: inline-block;
-    font-size: 12px;
-    padding-top: 10px;
+  display: inline-block;
+  font-size: 12px;
+  padding-top: 10px;
 }
 
 .reply-with-quote:hover {
-    cursor: pointer;
-    opacity: 0.5;
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 .post-content img {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .user-profile {
-    color: white;
-    padding: 5px;
-    font-size: 14px;
+  color: white;
+  padding: 5px;
+  font-size: 14px;
 }
 
 .user-profile:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .user-image {
-    float: left;
-    margin-right: 10px;
-    width: 84px;
-    height: 84px;
+  float: left;
+  margin-right: 10px;
+  width: 84px;
+  height: 84px;
 }
 
 .user-username {
-    margin: 0;
-    font-size: 18px
+  margin: 0;
+  font-size: 18px;
 }
 
 .user-guild-rank {
-    margin: 0;
+  margin: 0;
 }
 
 .user-class {
-    margin: 0;
-    color: lightpink;
+  margin: 0;
+  color: lightpink;
 }
 
 .user-ilvl {
-    margin: 0;
-    color: darkgrey;
+  margin: 0;
+  color: darkgrey;
 }
 
 .user-postcount {
-    margin: 0;
-    color: darkgrey;
+  margin: 0;
+  color: darkgrey;
 }
 
 .paging {
-    background-color: #171a1c;
-    padding: 15px;
-    line-height: 20px;
-    border-bottom: 2px solid #373a3e;
-    text-align: right;
+  background-color: #171a1c;
+  padding: 15px;
+  line-height: 20px;
+  border-bottom: 2px solid #373a3e;
+  text-align: right;
 }
 
 .pagination {
-    display: inline-block;
-    margin: 0;
-    padding: 0;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
 }
 
 .pagination li {
-    display: inline-block;
-    border: 1px solid grey;
-    background-color: white;
+  display: inline-block;
+  border: 1px solid grey;
+  background-color: white;
 }
 
-    .pagination li a {
-        padding: 5px;
-        color: grey;
-    }
+.pagination li a {
+  padding: 5px;
+  color: grey;
+}
 
 .pageCount {
-    margin-right: 10px;
-    display: inline-block;
-    font-size: 14px;
-    line-height: 0;
+  margin-right: 10px;
+  display: inline-block;
+  font-size: 14px;
+  line-height: 0;
 }
 
 .nextPage, .previousPage {
-    display: inline-block;
+  display: inline-block;
 }
 
-    .nextPage a, .previousPage a {
-        padding: 5px;
-        color: lightgrey !important;
-    }
+.nextPage a, .previousPage a {
+  padding: 5px;
+  color: lightgrey !important;
+}
 
 .activePage {
-    background-color: black !important;
+  background-color: black !important;
 }
 
 .activePage a {
-    color: white !important;
+  color: white !important;
 }
 
 .edit-post {
-    font-size: 22px;
-    color: orange;
-    transition: opacity 0.3s ease-in-out;
+  font-size: 22px;
+  color: orange;
+  transition: opacity 0.3s ease-in-out;
 }
 
-    .edit-post:hover { 
-        opacity: 0.5;
-        color: orange;
-    }
+.edit-post:hover {
+  opacity: 0.5;
+  color: orange;
+}
 
 .edit-comment {
-    color: orange;
-    transition: opacity 0.3s ease-in-out;
+  color: orange;
+  transition: opacity 0.3s ease-in-out;
 }
 
-    .edit-comment:hover {
-        opacity: 0.5;
-        color: orange;
-    }
+.edit-comment:hover {
+  opacity: 0.5;
+  color: orange;
+}
 
 .delete-post {
-    font-size: 22px;
-    color: darkred;
-    transition: opacity 0.3s ease-in-out;
+  font-size: 22px;
+  color: darkred;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .delete-comment {
-    color: darkred;
-    transition: opacity 0.3s ease-in-out;
-    margin-right: 10px;
+  color: darkred;
+  transition: opacity 0.3s ease-in-out;
+  margin-right: 10px;
 }
 
 .delete-post:hover, .delete-comment:hover {
-    opacity: 0.5;
-    color: darkred;
+  opacity: 0.5;
+  color: darkred;
 }
 
 .quote {
-    font-family: 'Montserrat', sans-serif;
-    background-color: #373a3e;
-    border-radius: 5px;
-    border: 2px solid #171a1c;
-    padding: 10px;
-    margin-bottom: 20px;
+  font-family: "Montserrat", sans-serif;
+  background-color: #373a3e;
+  border-radius: 5px;
+  border: 2px solid #171a1c;
+  padding: 10px;
+  margin-bottom: 20px;
 }
 
 .go-to-post {
-    margin-right: 10px;
-    color: lightgrey;
+  margin-right: 10px;
+  color: lightgrey;
 }
 
-    .go-to-post:hover {
-        color: white;
-        cursor: pointer;
-    }
+.go-to-post:hover {
+  color: white;
+  cursor: pointer;
+}
 
 .class-warrior {
-    color: #c69b6d;
+  color: #c69b6d;
 }
 
 .class-paladin {
-    color: #f48cba;
+  color: #f48cba;
 }
 
 .class-hunter {
-    color: #aad372;
+  color: #aad372;
 }
 
 .class-rogue {
-    color: #fff468;
+  color: #fff468;
 }
 
 .class-priest {
-    color: #f0ebe0;
+  color: #f0ebe0;
 }
 
 .class-dk {
-    color: #c41e3b;
+  color: #c41e3b;
 }
 
 .class-shaman {
-    color: #2359ff;
+  color: #2359ff;
 }
 
 .class-mage {
-    color: #68ccef;
+  color: #68ccef;
 }
 
 .class-warlock {
-    color: #9382c9;
+  color: #9382c9;
 }
 
 .class-monk {
-    color: #00ffba;
+  color: #00ffba;
 }
 
 .class-druid {
-    color: #ff7c0a;
+  color: #ff7c0a;
 }
 
 .class-dh {
-    color: #a330c9;
+  color: #a330c9;
 }
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
-    }
+  /* Hide captions */
+  .carousel-caption {
+    display: none;
+  }
 }
+
+/*# sourceMappingURL=site.css.map */
